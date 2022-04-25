@@ -1,0 +1,79 @@
+DEVICE : 'cuda'
+SEED_VALUE : 4321              
+LOGDIR : ''                            
+EXP_NAME : 'h36m_fcn'   
+DEBUG : True 
+OUTPUT_DIR : 'results' 
+
+DATASET_NAME : 'h36m'  
+ESTIMATOR : 'fcn'      
+BODY_REPRESENTATION : '3D'  
+SAMPLE_INTERVAL : 10                  
+
+SMPL_MODEL_DIR : "data/smpl/" 
+
+# CUDNN config
+CUDNN :      
+  BENCHMARK : True   
+  DETERMINISTIC : False  
+  ENABLED : True 
+
+
+# model config
+MODEL :
+  TYPE : 'network'
+  NAME : '' 
+# sampling setting
+  SAMPLE_TYPE : 'uniform' 
+  SLIDE_WINDOW_Q : 10
+  DROPOUT : 0.1   
+
+  ENCODER : 'Transformer'
+  ENCODER_RESIDUAL : True
+  ENCODER_HEAD : 4
+  ENCODER_TRANSFORMER_BLOCK : 5 
+  ENCODER_EMBEDDING_DIMENSION : 128 
+
+  DECODER : 'Transformer'  
+  DECODER_INTERP : 'Linear' 
+  DECODER_RESIDUAL : True
+  DECODER_HEAD : 4
+  DECODER_TRANSFORMER_BLOCK : 5 
+  DECODER_EMBEDDING_DIMENSION : 128 
+  DECODER_TOKEN_WINDOW : 5  
+
+
+# training config
+TRAIN :
+  BATCH_SIZE : 512
+  WORKERS_NUM : 0
+  EPOCH : 70
+  LR : 0.001
+  LRDECAY : 0.95
+  RESUME : None
+  VALIDATE : True 
+  USE_SMPL_LOSS : False
+  USE_6D_SMPL : False
+  PRE_NORM : True
+
+
+# test config
+EVALUATE:
+  PRETRAINED : 'data/checkpoints/h36m_fcn_3d/checkpoint.pth.tar'
+  ROOT_RELATIVE : True 
+  SLIDE_WINDOW_STEP_Q : 1
+  INTERP : False
+  RELATIVE_IMPROVEMENT : False
+  DENOISE : False
+
+# loss config
+LOSS :
+  LAMADA : 1.0
+  W_DENOISE : 1.0
+
+VIS:
+  INPUT_VIDEO_NUMBER : 143
+  INPUT_VIDEO_PATH : 'data/videos/'
+  OUTPUT_VIDEO_PATH : 'demo/'
+  START : 0
+  END : 1000
