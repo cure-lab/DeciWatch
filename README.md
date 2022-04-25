@@ -5,7 +5,10 @@ This repo is the official implementation of "**DeciWatch: A Simple Baseline for 
 
 ## Update
 - [x] Clean version is released! 
-It currently includes **code, data, log and models** for the following tasks: **2D human pose estimation, 3D human pose estimation and body recovery via a SMPL model.**
+It currently includes **code, data, log and models** for the following tasks: 
+-  2D human pose estimation
+- 3D human pose estimation
+- Body recovery via a SMPL model
 
 ## TODO
 - [ ] Provide different sample interval checkpoints/logs
