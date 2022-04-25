@@ -1,0 +1,11 @@
+tensorboard==2.8.0
+pyyaml==6.0
+yacs==0.1.8
+opencv-python==4.5.5.64
+progress==1.6
+smplx==0.1.28
+scipy==1.5.4
+chumpy==0.70
+thop==0.0.31.post2005241907
+Pillow==8.3.1
+tqdm==4.64.0
