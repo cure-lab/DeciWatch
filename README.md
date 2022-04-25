@@ -1,12 +1,15 @@
  # DeciWatch: A Simple Baseline for 10× Efficient 2D and 3D Pose Estimation
 
-Code repository for the paper:
+This repo is the official implementation of "**DeciWatch: A Simple Baseline for 10× Efficient 2D and 3D Pose Estimation**". 
+[[Paper]](https://arxiv.org/pdf/2203.08713.pdf)  [[Project]](https://ailingzeng.site/deciwatch)
 
-**DeciWatch: A Simple Baseline for 10× Efficient 2D and 3D Pose Estimation**
+## Update
+- [x] Clean version is released! 
+It currently includes **code, data, log and models** for the following tasks: **2D human pose estimation, 3D human pose estimation and body recovery via a SMPL model.**
 
-Ailing Zeng, Xuan Ju, Lei Yang, Ruiyuan Gao, Xizhou Zhu, Bo Dai, and Qiang Xu
-
-[[paper]](https://arxiv.org/pdf/2203.08713.pdf)   [[project]](https://ailingzeng.site/deciwatch)
+## TODO
+- [ ] Provide different sample interval checkpoints/logs
+- [ ] Add DeciWatch in [MMHuman3D](https://github.com/open-mmlab/mmhuman3d)
 
 
 ## Description
@@ -22,7 +25,7 @@ DeciWatch has been implemented and tested on Pytorch 1.10.1 with python >= 3.6. 
 
 Clone the repo:
 ```bash
-git clone ???
+git clone https://github.com/cure-lab/DeciWatch.git
 ```
 
 We recommend you install the requirements using `conda`:
@@ -41,7 +44,7 @@ All the data used in our experiment can be downloaded here.
 
 Valid data includes:
 
-| Dataset | Pose Estimator | 3D Keypoints | 2D Keypoints | SMPL |
+| Dataset | Pose Estimator | 3D Pose | 2D Pose | SMPL |
 |  ----  | ----  | ----  | ----  | ----  |
 | [Sub-JHMDB](http://jhmdb.is.tue.mpg.de/)  | [SimplePose](https://github.com/microsoft/human-pose-estimation.pytorch) |   | ✔ |   |
 | [3DPW](https://virtualhumans.mpi-inf.mpg.de/3DPW/)  | [EFT](https://github.com/facebookresearch/eft) | ✔ |   |  ✔ |
@@ -70,18 +73,18 @@ Note that the training and testing datasets should be downloaded and prepared be
 
 You may refer to [doc/training.md](./doc/training.md) for more training details.
 
-### Evaluate
+### Evaluation
 
-**Results on 2D**
+**Results on 2D Pose**
 
 | Dataset | Estimator | PCK 0.05 (INPUT/OUTPUT) | PCK 0.1 (INPUT/OUTPUT) | PCK 0.2 (INPUT/OUTPUT) | Download |
 | ------- | --------- | -------------------- | ------------------ | ------------- |------------- |
 | Sub-JHMDB   | simplepose      | 57.30%/79.32%              |81.61%/94.27%              | 93.94%/98.85%           |[Baidu Netdisk](https://pan.baidu.com/s/1W_9xEyJ9Y7zlBOt5fYpEWQ?pwd=rehu) / [Google Drive](https://drive.google.com/drive/folders/1Wd4MxpxLmqoTMB8AlnnMY4Vb641dp2Tw?usp=sharing)|
 
 
-**Results on 3D**
+**Results on 3D Pose**
 
-| Dataset | Estimator | MPJPE (INPUT/OUTPUT)  | ACC (INPUT/OUTPUT) | Download |
+| Dataset | Estimator | MPJPE (INPUT/OUTPUT)  | Accel (INPUT/OUTPUT) | Download |
 | ------- | --------- | ------------------ | ------------------ | -------- |
 | 3DPW    | SPIN      | 96.92/93.34            | 34.68/7.06            |[Baidu Netdisk](https://pan.baidu.com/s/1Kj70V107nGBH7142onXODQ?pwd=9p4o) / [Google Drive](https://drive.google.com/drive/folders/1lj93zsJj3_InTFGWpyNNZ_R7gRQSZE4P?usp=sharing)|
 | 3DPW    | EFT       | 90.34/89.02              | 32.83/6.84            | [Baidu Netdisk](https://pan.baidu.com/s/1d5Ib-IgWVPRbjUOf9LFXug?pwd=w3v2) / [Google Drive](https://drive.google.com/drive/folders/17xO_X213hcNEEtJbJlz8qE2aCB3-gncH?usp=sharing) |
@@ -91,7 +94,7 @@ You may refer to [doc/training.md](./doc/training.md) for more training details.
 
 **Results on SMPL**
 
-| Dataset | Estimator | MPJPE (INPUT/OUTPUT) | ACC (INPUT/OUTPUT) | MPVPE (INPUT/OUTPUT) | Download |
+| Dataset | Estimator | MPJPE (INPUT/OUTPUT) | Accel (INPUT/OUTPUT) | MPVPE (INPUT/OUTPUT) | Download |
 | ------- | --------- | ------------------ | ------------------ | ------------------ | ------ |
 | 3DPW    | SPIN      | 100.13/97.53             | 35.53/8.38            | 114.39/112.84            | [Baidu Netdisk](https://pan.baidu.com/s/1obQaCp6yjdkMQr2FRF3Y2A?pwd=b8ur) / [Google Drive](https://drive.google.com/drive/folders/1j7pYCOvvzBBcpu7G_S5-GOXenSXaDeZl?usp=sharing) |
 | 3DPW    | EFT       | 91.60/92.56              | 33.57/8.7 5           | 110.34/109.27            |[Baidu Netdisk](https://pan.baidu.com/s/1SP9EPwd_S0MPiyTfWGLgUg?pwd=8lfn) / [Google Drive](https://drive.google.com/drive/folders/1P_LObi8Tr09lw8149Pqe4Ks2SOK-RvYN?usp=sharing)|
@@ -102,7 +105,7 @@ Noted that although our main contribution is the efficiency improvement, using D
 
 You may refer to [doc/evaluate.md](./doc/evaluate.md) for evaluate details.
 
-### Demo
+### Quick Demo
 
 Run the commands below to visualize demo:
 
@@ -140,7 +143,10 @@ Please refer to the dataset website for the raw images. You may change the confi
 You may refer to [doc/visualize.md](./doc/visualize.md) for visualization details.
 
 
-## Cite
+## Citing DeciWatch
+
+If you find this repository useful for your work, please consider citing it as follows:
+
 ```bibtex
 @article{zeng2022deciwatch,
   title={DeciWatch: A Simple Baseline for 10x Efficient 2D and 3D Pose Estimation},
@@ -150,11 +156,13 @@ You may refer to [doc/visualize.md](./doc/visualize.md) for visualization detail
 }
 ```
 
-Please remember to cite all the datasets and backbone estimators if you use them in yout experiments.
+Please remember to cite all the datasets and backbone estimators if you use them in your experiments.
 
-## TODO
-- [ ] Provide different sample interval checkpoints/logs
-- [ ] Add DeciWatch in [MMHuman3D](https://github.com/open-mmlab/mmhuman3d)
+
+## Acknowledgement
+
+Many thanks to [Xuan Ju](https://cure-lab.github.io/people/xuan_ju/index.html) for her great efforts to clean almost the original code!!!
+
 
 ## License
 This code is available for **non-commercial scientific research purposes** as defined in the [LICENSE file](./LICENSE). By downloading and using this code you agree to the terms in the [LICENSE](./LICENSE). Third-party datasets and software are subject to their respective licenses.
