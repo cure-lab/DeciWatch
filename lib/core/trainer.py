@@ -45,7 +45,6 @@ class Trainer():  # merge
 
         self.train_global_step = 0
         self.valid_global_step = 0
-        self.epoch = 0
         self.device = cfg.DEVICE
         self.resume = cfg.TRAIN.RESUME
         self.lr = cfg.TRAIN.LR
