@@ -62,10 +62,10 @@ class DeciWatch(nn.Module):
                  encoder_hidden_dim,
                  decoder_hidden_dim,
                  dropout=0.1,
-                 nheads=8,
+                 nheads=4,
                  dim_feedforward=256,
-                 enc_layers=6,
-                 dec_layers=6,
+                 enc_layers=3,
+                 dec_layers=3,
                  activation="leaky_relu",
                  pre_norm=True):
         '''
@@ -171,15 +171,15 @@ class Transformer(nn.Module):
 
     def __init__(self,
                  input_nc,
-                 encoder_hidden_dim=512,
-                 decoder_hidden_dim=512,
-                 nhead=8,
-                 num_encoder_layers=6,
-                 num_decoder_layers=6,
-                 dim_feedforward=2048,
+                 encoder_hidden_dim=64,
+                 decoder_hidden_dim=64,
+                 nhead=4,
+                 num_encoder_layers=3,
+                 num_decoder_layers=3,
+                 dim_feedforward=256,
                  dropout=0.1,
-                 activation="relu",
-                 pre_norm=False):
+                 activation="leaky_relu",
+                 pre_norm=True):
         super(Transformer, self).__init__()
 
         self.joints_dim = input_nc
@@ -361,10 +361,10 @@ class TransformerEncoderLayer(nn.Module):
     def __init__(self,
                  encoder_hidden_dim,
                  nhead,
-                 dim_feedforward=2048,
+                 dim_feedforward=256,
                  dropout=0.1,
-                 activation="relu",
-                 pre_norm=False):
+                 activation="leaky_relu",
+                 pre_norm=True):
         super().__init__()
         self.self_attn = nn.MultiheadAttention(encoder_hidden_dim,
                                                nhead,
@@ -436,10 +436,10 @@ class TransformerDecoderLayer(nn.Module):
     def __init__(self,
                  decoder_hidden_dim,
                  nhead,
-                 dim_feedforward=2048,
+                 dim_feedforward=256,
                  dropout=0.1,
-                 activation="relu",
-                 pre_norm=False):
+                 activation="leaky_relu",
+                 pre_norm=True):
         super().__init__()
         self.self_attn = nn.MultiheadAttention(decoder_hidden_dim,
                                                nhead,
