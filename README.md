@@ -4,6 +4,8 @@ This repo is the official implementation of "**DeciWatch: A Simple Baseline for 
 [[Paper]](https://arxiv.org/pdf/2203.08713.pdf)  [[Project]](https://ailingzeng.site/deciwatch)
 
 ## Update
+- [x] Add DeciWatch in [MMHuman3D](https://github.com/open-mmlab/mmhuman3d) [Release v0.7.0](https://github.com/open-mmlab/mmhuman3d/releases/tag/v0.7.0) as a speed up strategy
+
 - [x] Clean version is released! 
 It currently includes **code, data, log and models** for the following tasks: 
 -  2D human pose estimation
@@ -12,13 +14,17 @@ It currently includes **code, data, log and models** for the following tasks:
 
 ## TODO
 - [ ] Provide different sample interval checkpoints/logs
-- [ ] Add DeciWatch in [MMHuman3D](https://github.com/open-mmlab/mmhuman3d)
 
 
 ## Description
 
 This paper proposes a simple baseline framework for video-based 2D/3D human pose estimation that can achieve 10 times efficiency improvement over existing works without any performance degradation, named DeciWatch. Unlike current solutions that estimate each frame in a video, DeciWatch introduces a simple yet effective sample-denoise-recover framework that only watches sparsely sampled frames, taking advantage of the continuity of human motions and the lightweight pose representation. Specifically, DeciWatch uniformly samples less than 10% video frames for detailed estimation, denoises the estimated 2D/3D poses with an efficient Transformer architecture, and then accurately recovers the rest of the frames using another Transformer-based network. Comprehensive experimental results on three video-based human pose estimation, body mesh recovery tasks and efficient labeling in videos with four datasets validate the efficiency and effectiveness of DeciWatch.
 
+### Major Features
+
+- Model training and evaluation for 2D, 3D, and SMPL body representation
+- Supporting four popular datasets and providing cleaned data of five popular pose estimation backbones
+- Versatile visualization toolbox with comparision of input(backbone estimator results) and output(DeciWatch results)
 
 ## Getting Started
 
@@ -80,14 +86,14 @@ You may refer to [doc/training.md](./doc/training.md) for more training details.
 
 **Results on 2D Pose**
 
-| Dataset | Estimator | PCK 0.05 (INPUT/OUTPUT) | PCK 0.1 (INPUT/OUTPUT) | PCK 0.2 (INPUT/OUTPUT) | Download |
+| Dataset | Estimator | PCK 0.05 (INPUT/OUTPUT):arrow_up_small: | PCK 0.1 (INPUT/OUTPUT):arrow_up_small: | PCK 0.2 (INPUT/OUTPUT):arrow_up_small: | Download |
 | ------- | --------- | -------------------- | ------------------ | ------------- |------------- |
 | Sub-JHMDB   | simplepose      | 57.30%/79.32%              |81.61%/94.27%              | 93.94%/98.85%           |[Baidu Netdisk](https://pan.baidu.com/s/1W_9xEyJ9Y7zlBOt5fYpEWQ?pwd=rehu) / [Google Drive](https://drive.google.com/drive/folders/1Wd4MxpxLmqoTMB8AlnnMY4Vb641dp2Tw?usp=sharing)|
 
 
 **Results on 3D Pose**
 
-| Dataset | Estimator | MPJPE (INPUT/OUTPUT)  | Accel (INPUT/OUTPUT) | Download |
+| Dataset | Estimator | MPJPE (INPUT/OUTPUT):arrow_down_small:  | Accel (INPUT/OUTPUT):arrow_down_small: | Download |
 | ------- | --------- | ------------------ | ------------------ | -------- |
 | 3DPW    | SPIN      | 96.92/93.34            | 34.68/7.06            |[Baidu Netdisk](https://pan.baidu.com/s/1Kj70V107nGBH7142onXODQ?pwd=9p4o) / [Google Drive](https://drive.google.com/drive/folders/1lj93zsJj3_InTFGWpyNNZ_R7gRQSZE4P?usp=sharing)|
 | 3DPW    | EFT       | 90.34/89.02              | 32.83/6.84            | [Baidu Netdisk](https://pan.baidu.com/s/1d5Ib-IgWVPRbjUOf9LFXug?pwd=w3v2) / [Google Drive](https://drive.google.com/drive/folders/17xO_X213hcNEEtJbJlz8qE2aCB3-gncH?usp=sharing) |
@@ -97,7 +103,7 @@ You may refer to [doc/training.md](./doc/training.md) for more training details.
 
 **Results on SMPL**
 
-| Dataset | Estimator | MPJPE (INPUT/OUTPUT) | Accel (INPUT/OUTPUT) | MPVPE (INPUT/OUTPUT) | Download |
+| Dataset | Estimator | MPJPE (INPUT/OUTPUT):arrow_down_small: | Accel (INPUT/OUTPUT):arrow_down_small: | MPVPE (INPUT/OUTPUT):arrow_down_small: | Download |
 | ------- | --------- | ------------------ | ------------------ | ------------------ | ------ |
 | 3DPW    | SPIN      | 100.13/97.53             | 35.53/8.38            | 114.39/112.84            | [Baidu Netdisk](https://pan.baidu.com/s/1obQaCp6yjdkMQr2FRF3Y2A?pwd=b8ur) / [Google Drive](https://drive.google.com/drive/folders/1j7pYCOvvzBBcpu7G_S5-GOXenSXaDeZl?usp=sharing) |
 | 3DPW    | EFT       | 91.60/92.56              | 33.57/8.7 5           | 110.34/109.27            |[Baidu Netdisk](https://pan.baidu.com/s/1SP9EPwd_S0MPiyTfWGLgUg?pwd=8lfn) / [Google Drive](https://drive.google.com/drive/folders/1P_LObi8Tr09lw8149Pqe4Ks2SOK-RvYN?usp=sharing)|
