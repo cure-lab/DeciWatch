@@ -27,6 +27,11 @@ This paper proposes a simple baseline framework for video-based 2D/3D human pose
 - Supporting **four popular datasets** ([Human3.6M](http://vision.imar.ro/human3.6m/description.php), [3DPW](https://virtualhumans.mpi-inf.mpg.de/3DPW/), [AIST++](https://google.github.io/aistplusplus_dataset/factsfigures.html), [Sub-JHMDB](http://jhmdb.is.tue.mpg.de/)) and providing cleaned data of **five popular pose estimation backbones**([FCN](https://github.com/una-dinosauria/3d-pose-baseline), [SPIN](https://github.com/nkolot/SPIN), [EFT](https://github.com/facebookresearch/eft), [PARE](https://pare.is.tue.mpg.de/), [SimplePose](https://github.com/microsoft/human-pose-estimation.pytorch))
 - Versatile visualization toolbox with comparision of **input (backbone estimator results) and output(DeciWatch results)**
 
+![visualize of Sub-JHMDB 2D Simplepose](./assets/jhmdb_2D_demo.gif) Visualize 2D poses on Sub-JHMDB dataset: 
+![visualize of AIST++ 3D SPIN](./assets/aist_3D_demo.gif) Visualize 3D poses on AIST++ dataset: 
+
+![visualize of 3DPW SMPL Pare](./assets/pw3d_smpl_demo.gif) Visualize SMPL on 3DPW dataset: 
+
 ## Getting Started
 
 ### Environment Requirement
