@@ -7,7 +7,7 @@ Visualization configs are explained in [lib/core/config.py](../lib/core/config.p
 You can directly visualize the results in different datasets and estimator settings using following commands
 
 
-### 2D
+### 2D Pose
 Sub-JHMDB Simplepose
 ```shell script
 python demo.py --cfg configs/config_jhmdb_simplepose_2D.yaml --dataset_name jhmdb --estimator simplepose --body_representation 2D --sample_interval 10
@@ -17,7 +17,7 @@ python demo.py --cfg configs/config_jhmdb_simplepose_2D.yaml --dataset_name jhmd
 ![visualize of Sub-JHMDB 2D Simplepose](./assets/jhmdb_2D_demo.gif)
 
 
-### 3D
+### 3D Pose
 3DPW SPIN
 ```shell script
 python demo.py --cfg configs/config_pw3d_spin_3D.yaml --dataset_name pw3d --estimator spin --body_representation 3D --sample_interval 10
