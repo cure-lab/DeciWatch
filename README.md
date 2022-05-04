@@ -95,16 +95,16 @@ You may refer to [doc/training.md](./doc/training.md) for more training details.
 
 ### Evaluation
 
-**Results on 2D Pose**
+**Results on 2D Pose:**
 
-| Dataset | Estimator | PCK 0.05 (INPUT/OUTPUT):arrow_up_small: | PCK 0.1 (INPUT/OUTPUT):arrow_up_small: | PCK 0.2 (INPUT/OUTPUT):arrow_up_small: | Download |
+| Dataset | Estimator | PCK 0.05 (Input/Output):arrow_up: | PCK 0.1 (Input/Output):arrow_up: | PCK 0.2 (Input/Output):arrow_up: | Checkpoint |
 | ------- | --------- | -------------------- | ------------------ | ------------- |------------- |
 | Sub-JHMDB   | simplepose      | 57.30%/79.32%              |81.61%/94.27%              | 93.94%/98.85%           |[Baidu Netdisk](https://pan.baidu.com/s/1W_9xEyJ9Y7zlBOt5fYpEWQ?pwd=rehu) / [Google Drive](https://drive.google.com/drive/folders/1Wd4MxpxLmqoTMB8AlnnMY4Vb641dp2Tw?usp=sharing)|
 
 
-**Results on 3D Pose**
+**Results on 3D Pose:**
 
-| Dataset | Estimator | MPJPE (INPUT/OUTPUT):arrow_down_small:  | Accel (INPUT/OUTPUT):arrow_down_small: | Download |
+| Dataset | Estimator | MPJPE (Input/Output):arrow_down: | Accel (Input/Output):arrow_down: | Checkpoint |
 | ------- | --------- | ------------------ | ------------------ | -------- |
 | 3DPW    | SPIN      | 96.92/93.34            | 34.68/7.06            |[Baidu Netdisk](https://pan.baidu.com/s/1Kj70V107nGBH7142onXODQ?pwd=9p4o) / [Google Drive](https://drive.google.com/drive/folders/1lj93zsJj3_InTFGWpyNNZ_R7gRQSZE4P?usp=sharing)|
 | 3DPW    | EFT       | 90.34/89.02              | 32.83/6.84            | [Baidu Netdisk](https://pan.baidu.com/s/1d5Ib-IgWVPRbjUOf9LFXug?pwd=w3v2) / [Google Drive](https://drive.google.com/drive/folders/17xO_X213hcNEEtJbJlz8qE2aCB3-gncH?usp=sharing) |
@@ -112,9 +112,9 @@ You may refer to [doc/training.md](./doc/training.md) for more training details.
 | AIST++    | SPIN       |  107.26/71.27           | 33.37/5.68         |    [Baidu Netdisk](https://pan.baidu.com/s/1X2KvDirfq5lIE9yrlbIbqg?pwd=5jpi) / [Google Drive](https://drive.google.com/drive/folders/17JNAyJqHx577oP4fWFUQHQIjIjFUuf6v?usp=sharing) |        
 | Human3.6M    | FCN       | 54.56/52.83              | 19.18/1.47           | [Baidu Netdisk](https://pan.baidu.com/s/1B_yLjyzNVNlE4fQOHuLTFQ?pwd=gdek) / [Google Drive](https://drive.google.com/drive/folders/1LblRGrXeVnW3jDwgYD9hj-ladhnumCrW?usp=sharing) |
 
-**Results on SMPL**
+**Results on SMPL-based Body Recovery:**
 
-| Dataset | Estimator | MPJPE (INPUT/OUTPUT):arrow_down_small: | Accel (INPUT/OUTPUT):arrow_down_small: | MPVPE (INPUT/OUTPUT):arrow_down_small: | Download |
+| Dataset | Estimator | MPJPE (Input/Output):arrow_down:| Accel (Input/Output):arrow_down:| MPVPE (Input/Output):arrow_down: | Checkpoint |
 | ------- | --------- | ------------------ | ------------------ | ------------------ | ------ |
 | 3DPW    | SPIN      | 100.13/97.53             | 35.53/8.38            | 114.39/112.84            | [Baidu Netdisk](https://pan.baidu.com/s/1obQaCp6yjdkMQr2FRF3Y2A?pwd=b8ur) / [Google Drive](https://drive.google.com/drive/folders/1j7pYCOvvzBBcpu7G_S5-GOXenSXaDeZl?usp=sharing) |
 | 3DPW    | EFT       | 91.60/92.56              | 33.57/8.7 5           | 110.34/109.27            |[Baidu Netdisk](https://pan.baidu.com/s/1SP9EPwd_S0MPiyTfWGLgUg?pwd=8lfn) / [Google Drive](https://drive.google.com/drive/folders/1P_LObi8Tr09lw8149Pqe4Ks2SOK-RvYN?usp=sharing)|
