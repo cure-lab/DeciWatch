@@ -9,7 +9,7 @@ All the files mentioned below can be downloaded here.
 Valid data includes:
 
 
-| Dataset | Pose Estimator | 3D Keypoints | 2D Keypoints | SMPL |
+| Dataset | Pose Estimator | 3D Pose | 2D Pose | SMPL |
 |  ----  | ----  | ----  | ----  | ----  |
 | [Sub-JHMDB](http://jhmdb.is.tue.mpg.de/)  | [SimplePose](https://github.com/microsoft/human-pose-estimation.pytorch) |   | ✔ |   |
 | [3DPW](https://virtualhumans.mpi-inf.mpg.de/3DPW/)  | [EFT](https://github.com/facebookresearch/eft) | ✔ |   |  ✔ |
