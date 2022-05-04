@@ -22,6 +22,16 @@ Valid data includes:
 All the models have the same settings with the original paper (e.g. training dataset and hyperparameters). There results are tested by us for fair comparison. We have make sure the dataset we test on have no overlap with the training dataset the model trained on. Specifically, we used architecture of '384x384_pose_resnet_101_d256d256d256' with trained weight on MPII for Simplepose.
 
 
+If you want to add your own datasets, please 
+
+- Organize the groundtruth data format following our settings(we recommend you to use the same format as follows) to generate ```\data\groundtruth_poses\[new_dataset]\[new_dataset]_gt_test.npz``` and ```\data\groundtruth_poses\[new_dataset]\[new_dataset]_gt_train.npz```. 
+
+- Organize the detected data format following our settings(we recommend you to use the same format as follows) to generate ```\data\detected_poses\[new_dataset]\[estimator]\[new_dataset]_[estimator]_test.npz``` and ```\data\detected_poses\[new_dataset]\[estimator]\[new_dataset]_[estimator]_train.npz```.
+
+- Add groundtruth data path, detected data path, keypoint number, and keypoint root in ```lib\core\config.py```.
+
+- write ```\lib\core\dataset\[new_dataset]_dataset.py``` following the files under ```\lib\core\dataset\```.
+
 ## 3DPW
 
 The sructure of the data should look like this:
