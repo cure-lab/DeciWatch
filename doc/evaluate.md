@@ -4,7 +4,7 @@ Training configs are explained in [lib/core/config.py](../lib/core/config.py). D
 
 The corresponding checkpoints can be download here and they are supposed to be put under ```data/checkpoints```:
 
-| Dataset | Pose Estimator | 3D Keypoints | 2D Keypoints | SMPL |
+| Dataset | Pose Estimator | 3D Pose | 2D Pose | SMPL |
 |  ----  | ----  | ----  | ----  | ----  |
 | [Sub-JHMDB](http://jhmdb.is.tue.mpg.de/)  | [SimplePose](https://openaccess.thecvf.com/content_ECCV_2018/html/Bin_Xiao_Simple_Baselines_for_ECCV_2018_paper.html) |   | [Baidu Netdisk](https://pan.baidu.com/s/1W_9xEyJ9Y7zlBOt5fYpEWQ?pwd=rehu) / [Google Drive](https://drive.google.com/drive/folders/1Wd4MxpxLmqoTMB8AlnnMY4Vb641dp2Tw?usp=sharing) |   |
 | [3DPW](https://virtualhumans.mpi-inf.mpg.de/3DPW/)  | [EFT](https://github.com/facebookresearch/eft) | [Baidu Netdisk](https://pan.baidu.com/s/1d5Ib-IgWVPRbjUOf9LFXug?pwd=w3v2) / [Google Drive](https://drive.google.com/drive/folders/17xO_X213hcNEEtJbJlz8qE2aCB3-gncH?usp=sharing) |   |  [Baidu Netdisk](https://pan.baidu.com/s/1SP9EPwd_S0MPiyTfWGLgUg?pwd=8lfn) / [Google Drive](https://drive.google.com/drive/folders/1P_LObi8Tr09lw8149Pqe4Ks2SOK-RvYN?usp=sharing) |
@@ -92,7 +92,7 @@ python eval.py --cfg configs/config_aist_spin_smpl.yaml --dataset_name aist --es
 
 We are stilling working on the blanked results.
 
-### Sub-JHMDB Simplepose 2D
+### Sub-JHMDB Simplepose 2D Pose
 
 | Interval/Q | 1/10 | 2/5 | 3/3 | 4/2 | 5/2 | 6/1 | 7/1 | 8/1 | 9/1 | 10/1 | 11/1 | 12/1 | 13/1 | 14/1 | 15/1 | 16/1 | 17/1 | 18/1 | 19/1 | 20/1 |
 | ---------- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
@@ -101,7 +101,7 @@ We are stilling working on the blanked results.
 |  PCK0.05 :arrow_up_small:  |       |      |      |      |      |      |      |      |      |       |      |      |      |      |      |      |      |      |      |      |
 
 
-### PW3D SPIN 3D
+### PW3D SPIN 3D Pose
 
 | Interval/Q | 1/100 | 2/50 | 3/33 | 4/25 | 5/20 | 6/16 | 7/14 | 8/12 | 9/11 | 10/10 | 11/9 | 12/8 | 13/7 | 14/7 | 15/6 | 16/6 | 17/5 | 18/5 | 19/5 | 20/5 |
 | ---------- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
@@ -109,7 +109,7 @@ We are stilling working on the blanked results.
 |  ACC(IN/OUT) :arrow_down_small:  |  34.62/33.52     | 34.62/14.47     |  34.64/10.51    |  34.64/8.94    |  34.65/8.15    |   34.66/7.73   |   34.67/7.45   |  34.68/7.27    | 34.67/7.17     |   34.68/7.05    |   34.70/7.00   |  34.71/6.93    |   34.70/6.90   |  34.73/6.85    |  34.74/6.87    |  34.74/6.81    |  34.73/6.85    |   34.78/6.82   |  34.75/6.77    |  34.75/6.76    |
 
 
-### PW3D EFT 3D
+### PW3D EFT 3D Pose
 
 | Interval/Q | 1/100 | 2/50 | 3/33 | 4/25 | 5/20 | 6/16 | 7/14 | 8/12 | 9/11 | 10/10 | 11/9 | 12/8 | 13/7 | 14/7 | 15/6 | 16/6 | 17/5 | 18/5 | 19/5 | 20/5 |
 | ---------- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
@@ -118,7 +118,7 @@ We are stilling working on the blanked results.
 
 
 
-### PW3D PARE 3D
+### PW3D PARE 3D Pose
 
 | Interval/Q | 1/100 | 2/50 | 3/33 | 4/25 | 5/20 | 6/16 | 7/14 | 8/12 | 9/11 | 10/10 | 11/9 | 12/8 | 13/7 | 14/7 | 15/6 | 16/6 | 17/5 | 18/5 | 19/5 | 20/5 |
 | ---------- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
@@ -127,7 +127,7 @@ We are stilling working on the blanked results.
 
 
 
-### H36M FCN 3D
+### H36M FCN 3D Pose
 
 | Interval/Q | 1/100 | 2/50 | 3/33 | 4/25 | 5/20 | 6/16 | 7/14 | 8/12 | 9/11 | 10/10 | 11/9 | 12/8 | 13/7 | 14/7 | 15/6 | 16/6 | 17/5 | 18/5 | 19/5 | 20/5 |
 | ---------- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
@@ -136,7 +136,7 @@ We are stilling working on the blanked results.
 
 
 
-### AIST SPIN 3D
+### AIST SPIN 3D Pose
 
 | Interval/Q | 1/100 | 2/50 | 3/33 | 4/25 | 5/20 | 6/16 | 7/14 | 8/12 | 9/11 | 10/10 | 11/9 | 12/8 | 13/7 | 14/7 | 15/6 | 16/6 | 17/5 | 18/5 | 19/5 | 20/5 |
 | ---------- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
