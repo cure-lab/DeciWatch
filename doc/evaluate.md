@@ -13,6 +13,8 @@ The corresponding checkpoints can be download here and they are supposed to be p
 | [Human3.6M](http://vision.imar.ro/human3.6m/description.php)  | [FCN](https://github.com/una-dinosauria/3d-pose-baseline) | [Baidu Netdisk](https://pan.baidu.com/s/1B_yLjyzNVNlE4fQOHuLTFQ?pwd=gdek) / [Google Drive](https://drive.google.com/drive/folders/1LblRGrXeVnW3jDwgYD9hj-ladhnumCrW?usp=sharing) |   |   |
 | [AIST++](https://google.github.io/aistplusplus_dataset/factsfigures.html)  | [SPIN](https://github.com/nkolot/SPIN) | [Baidu Netdisk](https://pan.baidu.com/s/1X2KvDirfq5lIE9yrlbIbqg?pwd=5jpi) / [Google Drive](https://drive.google.com/drive/folders/17JNAyJqHx577oP4fWFUQHQIjIjFUuf6v?usp=sharing) |   | [Baidu Netdisk](https://pan.baidu.com/s/1EwiR3AyMP8tnSYgU1VY1Tg?pwd=7p4f) / [Google Drive](https://drive.google.com/drive/folders/1X8N1XU2IN3DMSEE5u36Ca8nkuKEul5hj?usp=sharing) |
 
+We also provide checkpoints with different intervals and slide window Q for different datasets and backbones. ```checkpoint_i3_q33.pth.tar``` means checkpoint trained with ```interval=3``` and```slide window Q=33```. You can find the evaluation results of different intervals below.
+
 ## Evaluation Commands
 
 You can directly evaluate the model in different datasets and estimator settings using following commands
@@ -85,5 +87,97 @@ python eval.py --cfg configs/config_aist_spin_smpl.yaml --dataset_name aist --es
 
 
 - Set ```cfg.EVALUATE.DENOISE = True``` to see the performance of DeciWatch DenoiseNet.
+
+## Different interval results
+
+We are stilling working on the blanked results.
+
+### Sub-JHMDB Simplepose 2D
+
+| Interval/Q | 1/10 | 2/5 | 3/3 | 4/2 | 5/2 | 6/1 | 7/1 | 8/1 | 9/1 | 10/1 | 11/1 | 12/1 | 13/1 | 14/1 | 15/1 | 16/1 | 17/1 | 18/1 | 19/1 | 20/1 |
+| ---------- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| MPJPE(IN/OUT)     |       |      |      |      |      |      |      |      |      |       |      |      |      |      |      |      |      |      |      |      |
+|  ACC(IN/OUT)   |       |      |      |      |      |      |      |      |      |       |      |      |      |      |      |      |      |      |      |      |
+
+
+### PW3D SPIN 3D
+
+| Interval/Q | 1/100 | 2/50 | 3/33 | 4/25 | 5/20 | 6/16 | 7/14 | 8/12 | 9/11 | 10/10 | 11/9 | 12/8 | 13/7 | 14/7 | 15/6 | 16/6 | 17/5 | 18/5 | 19/5 | 20/5 |
+| ---------- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| MPJPE(IN/OUT)     |       |      |      |      |      |      |      |      |      |       |      |      |      |      |      |      |      |      |      |      |
+|  ACC(IN/OUT)   |       |      |      |      |      |      |      |      |      |       |      |      |      |      |      |      |      |      |      |      |
+
+
+### PW3D EFT 3D
+
+| Interval/Q | 1/100 | 2/50 | 3/33 | 4/25 | 5/20 | 6/16 | 7/14 | 8/12 | 9/11 | 10/10 | 11/9 | 12/8 | 13/7 | 14/7 | 15/6 | 16/6 | 17/5 | 18/5 | 19/5 | 20/5 |
+| ---------- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| MPJPE(IN/OUT)     |       |      |      |      |      |      |      |      |      |       |      |      |      |      |      |      |      |      |      |      |
+|  ACC(IN/OUT)   |       |      |      |      |      |      |      |      |      |       |      |      |      |      |      |      |      |      |      |      |
+
+
+
+### PW3D PARE 3D
+
+| Interval/Q | 1/100 | 2/50 | 3/33 | 4/25 | 5/20 | 6/16 | 7/14 | 8/12 | 9/11 | 10/10 | 11/9 | 12/8 | 13/7 | 14/7 | 15/6 | 16/6 | 17/5 | 18/5 | 19/5 | 20/5 |
+| ---------- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| MPJPE(IN/OUT)     |       |      |      |      |      |      |      |      |      |       |      |      |      |      |      |      |      |      |      |      |
+|  ACC(IN/OUT)   |       |      |      |      |      |      |      |      |      |       |      |      |      |      |      |      |      |      |      |      |
+
+
+
+### H36M FCN 3D
+
+| Interval/Q | 1/100 | 2/50 | 3/33 | 4/25 | 5/20 | 6/16 | 7/14 | 8/12 | 9/11 | 10/10 | 11/9 | 12/8 | 13/7 | 14/7 | 15/6 | 16/6 | 17/5 | 18/5 | 19/5 | 20/5 |
+| ---------- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| MPJPE(IN/OUT)     |       |      |      |      |      |      |      |      |      |       |      |      |      |      |      |      |      |      |      |      |
+|  ACC(IN/OUT)   |       |      |      |      |      |      |      |      |      |       |      |      |      |      |      |      |      |      |      |      |
+
+
+
+### AIST SPIN 3D
+
+| Interval/Q | 1/100 | 2/50 | 3/33 | 4/25 | 5/20 | 6/16 | 7/14 | 8/12 | 9/11 | 10/10 | 11/9 | 12/8 | 13/7 | 14/7 | 15/6 | 16/6 | 17/5 | 18/5 | 19/5 | 20/5 |
+| ---------- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| MPJPE(IN/OUT)     |       |      |      |      |      |      |      |      |      |       |      |      |      |      |      |      |      |      |      |      |
+|  ACC(IN/OUT)   |       |      |      |      |      |      |      |      |      |       |      |      |      |      |      |      |      |      |      |      |
+
+
+
+### PW3D SPIN SMPL
+
+| Interval/Q | 1/100 | 2/50 | 3/33 | 4/25 | 5/20 | 6/16 | 7/14 | 8/12 | 9/11 | 10/10 | 11/9 | 12/8 | 13/7 | 14/7 | 15/6 | 16/6 | 17/5 | 18/5 | 19/5 | 20/5 |
+| ---------- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| MPJPE(IN/OUT)     |       |      |      |      |      |      |      |      |      |       |      |      |      |      |      |      |      |      |      |      |
+|  ACC(IN/OUT)   |       |      |      |      |      |      |      |      |      |       |      |      |      |      |      |      |      |      |      |      |
+
+
+
+### PW3D EFT SMPL
+
+| Interval/Q | 1/100 | 2/50 | 3/33 | 4/25 | 5/20 | 6/16 | 7/14 | 8/12 | 9/11 | 10/10 | 11/9 | 12/8 | 13/7 | 14/7 | 15/6 | 16/6 | 17/5 | 18/5 | 19/5 | 20/5 |
+| ---------- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| MPJPE(IN/OUT)     |       |      |      |      |      |      |      |      |      |       |      |      |      |      |      |      |      |      |      |      |
+|  ACC(IN/OUT)   |       |      |      |      |      |      |      |      |      |       |      |      |      |      |      |      |      |      |      |      |
+
+
+
+### PW3D PARE SMPL
+
+| Interval/Q | 1/100 | 2/50 | 3/33 | 4/25 | 5/20 | 6/16 | 7/14 | 8/12 | 9/11 | 10/10 | 11/9 | 12/8 | 13/7 | 14/7 | 15/6 | 16/6 | 17/5 | 18/5 | 19/5 | 20/5 |
+| ---------- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| MPJPE(IN/OUT)     |       |      |      |      |      |      |      |      |      |       |      |      |      |      |      |      |      |      |      |      |
+|  ACC(IN/OUT)   |       |      |      |      |      |      |      |      |      |       |      |      |      |      |      |      |      |      |      |      |
+
+
+
+### AIST SPIN SMPL
+
+| Interval/Q | 1/100 | 2/50 | 3/33 | 4/25 | 5/20 | 6/16 | 7/14 | 8/12 | 9/11 | 10/10 | 11/9 | 12/8 | 13/7 | 14/7 | 15/6 | 16/6 | 17/5 | 18/5 | 19/5 | 20/5 |
+| ---------- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| MPJPE(IN/OUT)     |       |      |      |      |      |      |      |      |      |       |      |      |      |      |      |      |      |      |      |      |
+|  ACC(IN/OUT)   |       |      |      |      |      |      |      |      |      |       |      |      |      |      |      |      |      |      |      |      |
+
+
 
 
