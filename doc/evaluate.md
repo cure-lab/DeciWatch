@@ -19,14 +19,14 @@ We also provide checkpoints with different intervals and slide window Q for diff
 
 You can directly evaluate the model in different datasets and estimator settings using following commands
 
-### 2D
+### 2D Pose
 Sub-JHMDB Simplepose
 ```shell script
 python eval.py --cfg configs/config_jhmdb_simplepose_2D.yaml --dataset_name jhmdb --estimator simplepose --body_representation 2D --sample_interval 10
 
 ```
 
-### 3D
+### 3D Pose
 3DPW SPIN
 ```shell script
 python eval.py --cfg configs/config_pw3d_spin_3D.yaml --dataset_name pw3d --estimator spin --body_representation 3D --sample_interval 10
