@@ -2,7 +2,7 @@
 
 Training configs are explained in [lib/core/config.py](../lib/core/config.py). Different configs for different datasets and estimators are in [config](../configs/) folder.
 
-| Dataset | Pose Estimator | 3D Keypoints | 2D Keypoints | SMPL |
+| Dataset | Pose Estimator | 3D Pose | 2D Pose | SMPL |
 |  ----  | ----  | ----  | ----  | ----  |
 | [Sub-JHMDB](http://jhmdb.is.tue.mpg.de/)  | [SimplePose](https://openaccess.thecvf.com/content_ECCV_2018/html/Bin_Xiao_Simple_Baselines_for_ECCV_2018_paper.html) |   | [config](../configs/config_jhmdb_simplepose_2D.yaml) |   |
 | [3DPW](https://virtualhumans.mpi-inf.mpg.de/3DPW/)  | [EFT](https://github.com/facebookresearch/eft) | [config](../configs/config_pw3d_eft_3D.yaml) |   |  [config](../configs/config_pw3d_eft_smpl.yaml) |
@@ -17,14 +17,14 @@ Training configs are explained in [lib/core/config.py](../lib/core/config.py). D
 You can directly train the model in different datasets and estimator settings using following commands
 
 
-### 2D
+### 2D Pose
 Sub-JHMDB Simplepose
 ```shell script
 python train.py --cfg configs/config_jhmdb_simplepose_2D.yaml --dataset_name jhmdb --estimator simplepose --body_representation 2D --sample_interval 10
 
 ```
 
-### 3D
+### 3D Pose
 3DPW SPIN
 ```shell script
 python train.py --cfg configs/config_pw3d_spin_3D.yaml --dataset_name pw3d --estimator spin --body_representation 3D --sample_interval 10
