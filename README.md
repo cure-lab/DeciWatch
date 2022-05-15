@@ -117,7 +117,7 @@ You may refer to [doc/training.md](./doc/training.md) for more training details.
 | Dataset | Estimator | MPJPE (Input/Output):arrow_down:| Accel (Input/Output):arrow_down:| MPVPE (Input/Output):arrow_down: | Checkpoint |
 | ------- | --------- | ------------------ | ------------------ | ------------------ | ------ |
 | 3DPW    | SPIN      | 100.13/97.53             | 35.53/8.38            | 114.39/112.84            | [Baidu Netdisk](https://pan.baidu.com/s/1obQaCp6yjdkMQr2FRF3Y2A?pwd=b8ur) / [Google Drive](https://drive.google.com/drive/folders/1j7pYCOvvzBBcpu7G_S5-GOXenSXaDeZl?usp=sharing) |
-| 3DPW    | EFT       | 91.60/92.56              | 33.57/8.7 5           | 110.34/109.27            |[Baidu Netdisk](https://pan.baidu.com/s/1SP9EPwd_S0MPiyTfWGLgUg?pwd=8lfn) / [Google Drive](https://drive.google.com/drive/folders/1P_LObi8Tr09lw8149Pqe4Ks2SOK-RvYN?usp=sharing)|
+| 3DPW    | EFT       | 91.60/92.56              | 33.57/8.75           | 110.34/109.27            |[Baidu Netdisk](https://pan.baidu.com/s/1SP9EPwd_S0MPiyTfWGLgUg?pwd=8lfn) / [Google Drive](https://drive.google.com/drive/folders/1P_LObi8Tr09lw8149Pqe4Ks2SOK-RvYN?usp=sharing)|
 | 3DPW    | PARE       | 80.44/81.76                |  26.77/7.24            |94.88/95.68           | [Baidu Netdisk](https://pan.baidu.com/s/1Leo2O1FHoumk0lMaX9AFhQ?pwd=7504) / [Google Drive](https://drive.google.com/drive/folders/1m7IeojeAN9_WBTCwv8921RgOX1SPn7P4?usp=sharing) |
 | AIST++    | SPIN       | 108.25/82.10              | 33.83/7.27         | 137.51/106.08            |   [Baidu Netdisk](https://pan.baidu.com/s/1EwiR3AyMP8tnSYgU1VY1Tg?pwd=7p4f) / [Google Drive](https://drive.google.com/drive/folders/1X8N1XU2IN3DMSEE5u36Ca8nkuKEul5hj?usp=sharing) |
 
