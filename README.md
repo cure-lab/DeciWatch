@@ -4,6 +4,8 @@ This repo is the official implementation of "**DeciWatch: A Simple Baseline for 
 [[Paper]](https://arxiv.org/pdf/2203.08713.pdf)  [[Project]](https://ailingzeng.site/deciwatch)
 
 ## Update
+- [x] Provide different sample interval checkpoints
+
 - [x] Support DeciWatch in [MMHuman3D](https://github.com/open-mmlab/mmhuman3d) [Release v0.7.0](https://github.com/open-mmlab/mmhuman3d/releases/tag/v0.7.0) as a 10x speed up strategy!
 
 - [x] Clean version is released! 
@@ -14,7 +16,7 @@ It currently includes **code, data, log and models** for the following tasks:
 
 ## TODO
 - [ ] Support DeciWatch in [MMPose](https://github.com/open-mmlab/mmpose)
-- [ ] Provide different sample interval checkpoints/logs
+
 
 
 ## Description
