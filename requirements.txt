@@ -9,3 +9,5 @@ chumpy==0.70
 thop==0.0.31.post2005241907
 Pillow==8.3.1
 tqdm==4.64.0
+trimesh==3.12.5
+pyrender==0.1.45
