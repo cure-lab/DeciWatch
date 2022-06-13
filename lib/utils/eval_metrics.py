@@ -205,11 +205,12 @@ def evaluate_deciwatch_2D(model,
         # linear interpolation
         choose_index = range(0, cfg.MODEL.SLIDE_WINDOW_SIZE,
                              cfg.MODEL.INTERVAL_N)
+        # Modify "mode" into three modes: 'nearest' | 'linear' | 'bilinear'
         data_interp1d = torch.nn.functional.interpolate(
             input=data_pred[:, choose_index, :].permute(0, 2, 1),
             size=cfg.MODEL.SLIDE_WINDOW_SIZE,
             mode='linear',
-            align_corners=True).permute(0, 2, 1)
+            align_corners=True).permute(0, 2, 1) 
         # deciwatch
         with torch.no_grad():
             predicted_pos, denoised_pos = model(data_pred, device)
@@ -428,6 +429,7 @@ def evaluate_deciwatch_3D(model, test_dataloader, device, cfg):
 
         choose_index = range(0, cfg.MODEL.SLIDE_WINDOW_SIZE,
                              cfg.MODEL.INTERVAL_N)
+        # Modify "mode" into three modes: 'nearest' | 'linear' | 'bilinear'
         data_interp1d = torch.nn.functional.interpolate(
             input=data_pred[:, choose_index, :].permute(0, 2, 1),
             size=cfg.MODEL.SLIDE_WINDOW_SIZE,
@@ -561,6 +563,7 @@ def evaluate_deciwatch_smpl(model, test_dataloader, device, cfg):
 
         choose_index = range(0, cfg.MODEL.SLIDE_WINDOW_SIZE,
                              cfg.MODEL.INTERVAL_N)
+        # Modify "mode" into three modes: 'nearest' | 'linear' | 'bilinear'
         data_interp1d = torch.nn.functional.interpolate(
             input=data_pred[:, choose_index, :].permute(0, 2, 1),
             size=cfg.MODEL.SLIDE_WINDOW_SIZE,
