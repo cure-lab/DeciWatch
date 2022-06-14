@@ -32,6 +32,17 @@ If you want to add your own datasets, please
 
 - write ```\lib\core\dataset\[new_dataset]_dataset.py``` following the files under ```\lib\core\dataset\```.
 
+**How to transfer custom data into our data?**:
+
+- First, our 3d position is the root-relative 3d position in meter; 2d position is the normalized 2d pixel position in an image; SMPL parameters are the original outputs from estimators (e.g., PARE).
+
+- To facilitate the transformation from raw output data into our data, we provide these transformation functions as follows.
+  - For 2D pose transformation, if inputting the 2d positions under the pixel coordination, you can use [normalize_screen_coordinates](https://github.com/cure-lab/DeciWatch/blob/main/lib/utils/cam_utils.py#11) to normalize the pixel-wise 2d position into [-1, 1], and then put them into the model for training and inference. Lastly, you can use [image_coordinates](https://github.com/cure-lab/DeciWatch/blob/main/lib/utils/cam_utils.py#23) to denormalize the position into a pixel unit for error calculation and visualization.
+  - For 3D pose transformation, if inputting the 3d positions under the world coordinate, you can use [world_to_camera](https://github.com/cure-lab/DeciWatch/blob/main/lib/utils/cam_utils.py#97) and then subtract the root 3d position to get the root-relative 3d position in meter. We calculate the MPJPE and Accel under the root-relative 3d position in millimeter. Also, you can use [camera_to_world](https://github.com/cure-lab/DeciWatch/blob/main/lib/utils/cam_utils.py#102) for visualization.
+  - Besides, if you need to get the projected 2d positions from 3d positions under the camera coordinate, you can use [project_to_2d](https://github.com/cure-lab/DeciWatch/blob/main/lib/utils/cam_utils.py#126) with distortion parameters or [project_to_2d_linear](https://github.com/cure-lab/DeciWatch/blob/main/lib/utils/cam_utils.py#160) without distortion parameters.
+
+
+
 ## 3DPW
 
 The sructure of the data should look like this:
