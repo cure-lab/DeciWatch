@@ -290,7 +290,7 @@ class Visualize():
         data_imageshape=self.ground_truth_data["imgshape"][self.vis_seq_index]
 
         data_gt = torch.tensor(data_gt).to(self.device)
-        data_pred_norm=torch.tensor(data_pred.reshape(-1,2)/data_imageshape[:2]).to(self.device).reshape_as(data_gt)
+        data_pred_norm=torch.tensor(data_pred.reshape(-1,2)/data_imageshape[:2][::-1]).to(self.device).reshape_as(data_gt)
         data_pred = torch.tensor(data_pred).to(self.device)
 
         data_len = data_pred.shape[0]
@@ -316,7 +316,7 @@ class Visualize():
         data_gt = np.array(data_gt.reshape(-1, keypoint_number, 2).cpu())
         data_pred = np.array(data_pred.reshape(-1, keypoint_number, 2).cpu())
         predicted_pos = np.array(
-            predicted_pos.reshape(-1, keypoint_number, 2).cpu())*data_imageshape[:2]
+            predicted_pos.reshape(-1, keypoint_number, 2).cpu())*data_imageshape[:2][::-1]
 
         if self.dataset_name == "jhmdb":
             data_imgname_full = np.array([''] * data_len, dtype=object)

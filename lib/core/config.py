@@ -116,15 +116,14 @@ cfg.LOSS.LAMADA = 2.0  # loss lamada
 cfg.LOSS.W_DENOISE = 1.0  # loss w denoise
 
 # encoder
-cfg.MODEL.ENCODER = 'Transformer'  # 'Transformer' | 'MLP'
 cfg.MODEL.ENCODER_RESIDUAL = True  # encoder residual
 cfg.MODEL.ENCODER_HEAD = 4  # encoder multi-head attention head number
 cfg.MODEL.ENCODER_TRANSFORMER_BLOCK = 3  # encoder transformer block number
 cfg.MODEL.ENCODER_EMBEDDING_DIMENSION = 512  # encoder embedding size
 
 # decoder
-cfg.MODEL.DECODER = 'Transformer'  # 'Transformer', 'MLP'
-cfg.MODEL.DECODER_INTERP = 'Linear'  # 'Linear', 'Quadratic', 'MLP'
+cfg.MODEL.DECODER = 'transformer'  # 'transformer', 'tradition_interp'
+cfg.MODEL.DECODER_INTERP = 'linear'  # 'linear', 'bilinear', 'bicubic'
 cfg.MODEL.DECODER_RESIDUAL = True  # decoder residual
 cfg.MODEL.DECODER_HEAD = 4  # decoder head number
 cfg.MODEL.DECODER_TRANSFORMER_BLOCK = 3  # decoder transformer block number
@@ -190,7 +189,7 @@ def parse_args():
     cfg.SAMPLE_INTERVAL = args.sample_interval
     cfg.MODEL.INTERVAL_N = cfg.SAMPLE_INTERVAL
 
-    # cfg.MODEL.SLIDE_WINDOW_Q=20//cfg.MODEL.INTERVAL_N
+    # cfg.MODEL.SLIDE_WINDOW_Q=10//cfg.MODEL.INTERVAL_N
     # cfg.EVALUATE.SLIDE_WINDOW_STEP_Q=cfg.MODEL.SLIDE_WINDOW_Q
 
     cfg.MODEL.SLIDE_WINDOW_SIZE = cfg.MODEL.INTERVAL_N * cfg.MODEL.SLIDE_WINDOW_Q + 1

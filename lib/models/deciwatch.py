@@ -67,7 +67,9 @@ class DeciWatch(nn.Module):
                  enc_layers=3,
                  dec_layers=3,
                  activation="leaky_relu",
-                 pre_norm=True):
+                 pre_norm=True,
+                 recovernet_interp_method="linear",
+                 recovernet_mode="transformer"):
         '''
         pos_embed_dim: position embedding dim
         sample_interval: uniform sampling interval N
@@ -88,7 +90,9 @@ class DeciWatch(nn.Module):
             "enc_layers": enc_layers,
             "dec_layers": dec_layers,
             "activation": activation,
-            "pre_norm": pre_norm
+            "pre_norm": pre_norm,
+            "recovernet_interp_method":recovernet_interp_method,
+            "recovernet_mode":recovernet_mode
         }
 
         self.transformer = build_model(self.deciwatch_par)
@@ -170,25 +174,27 @@ class DeciWatch(nn.Module):
 class Transformer(nn.Module):
 
     def __init__(self,
-                 input_nc,
-                 encoder_hidden_dim=64,
-                 decoder_hidden_dim=64,
-                 nhead=4,
-                 num_encoder_layers=3,
-                 num_decoder_layers=3,
-                 dim_feedforward=256,
-                 dropout=0.1,
-                 activation="leaky_relu",
-                 pre_norm=True):
+                input_nc,
+                encoder_hidden_dim=64,
+                decoder_hidden_dim=64,
+                nhead=4,
+                num_encoder_layers=3,
+                num_decoder_layers=3,
+                dim_feedforward=256,
+                dropout=0.1,
+                activation="leaky_relu",
+                pre_norm=True,
+                recovernet_interp_method="linear",
+                recovernet_mode="transformer"):
         super(Transformer, self).__init__()
 
         self.joints_dim = input_nc
         # bring in semantic (5 frames) temporal information into tokens
         self.decoder_embed = nn.Conv1d(self.joints_dim,
-                                       decoder_hidden_dim,
-                                       kernel_size=5,
-                                       stride=1,
-                                       padding=2)
+                                    decoder_hidden_dim,
+                                    kernel_size=5,
+                                    stride=1,
+                                    padding=2)
 
         self.encoder_embed = nn.Linear(self.joints_dim, encoder_hidden_dim)
 
@@ -197,19 +203,19 @@ class Transformer(nn.Module):
                                                 activation, pre_norm)
         encoder_norm = nn.LayerNorm(encoder_hidden_dim) if pre_norm else None
         self.encoder = TransformerEncoder(encoder_layer, num_encoder_layers,
-                                          encoder_norm)
+                                        encoder_norm)
 
         decoder_layer = TransformerDecoderLayer(decoder_hidden_dim, nhead,
                                                 dim_feedforward, dropout,
                                                 activation, pre_norm)
         decoder_norm = nn.LayerNorm(decoder_hidden_dim)
         self.decoder = TransformerDecoder(decoder_layer, num_decoder_layers,
-                                          decoder_norm)
+                                        decoder_norm)
 
         self.decoder_joints_embed = nn.Linear(decoder_hidden_dim,
-                                              self.joints_dim)
+                                            self.joints_dim)
         self.encoder_joints_embed = nn.Linear(encoder_hidden_dim,
-                                              self.joints_dim)
+                                            self.joints_dim)
 
         # reset parameters
         for p in self.parameters():
@@ -220,29 +226,14 @@ class Transformer(nn.Module):
         self.decoder_hidden_dim = decoder_hidden_dim
 
         self.nhead = nhead
+        
+        self.recovernet_interp_method=recovernet_interp_method
+        self.recovernet_mode=recovernet_mode
 
     def _generate_square_subsequent_mask(self, sz):
         mask = torch.triu(torch.ones(sz, sz), 1)
         mask = mask.masked_fill(mask == 1, float('-inf'))
         return mask
-
-    def interpolate_embedding(self, input, rate):
-
-        tmp = input.clone()
-        seq_len = input.shape[0]
-        indice = torch.arange(seq_len, dtype=int).to(self.device)
-        chunk = torch.div(indice, rate, rounding_mode='trunc')
-        remain = indice % rate
-
-        prev = tmp[chunk * rate]
-
-        next = torch.cat([tmp[(chunk[:-1] + 1) * rate], tmp[-1].unsqueeze(0)],
-                         dim=0)
-
-        interpolate = (prev / rate * (rate - remain.view(-1, 1, 1))) + (
-            next / rate * remain.view(-1, 1, 1))
-
-        return interpolate
 
     def forward(self, input_seq, encoder_mask, encoder_pos_embed,
                 input_seq_interp, decoder_mask, decoder_pos_embed,
@@ -260,37 +251,45 @@ class Transformer(nn.Module):
         # mask on all sequences:
         trans_src = self.encoder_embed(input_seq)
         mem = self.encode(trans_src, encoder_mask,
-                          encoder_pos_embed)  #[l,n,hid]
+                        encoder_pos_embed)  #[l,n,hid]
         reco = self.encoder_joints_embed(mem) + input
+        
+        interp = torch.nn.functional.interpolate(
+            input=reco[::sample_interval, : , :].permute(1,2,0),
+            size=reco.shape[0],
+            mode=self.recovernet_interp_method,
+            align_corners=True).permute(2, 0, 1) 
 
-        interp = self.interpolate_embedding(reco, sample_interval)
         center = interp.clone()
         trans_tgt = self.decoder_embed(interp.permute(1, 2,
-                                                      0)).permute(2, 0, 1)
+                                                    0)).permute(2, 0, 1)
 
         output = self.decode(mem, encoder_mask, encoder_pos_embed, trans_tgt,
-                             decoder_mask, decoder_pos_embed)
+                            decoder_mask, decoder_pos_embed)
 
         joints = self.decoder_joints_embed(output) + center
-        return joints, reco
+        if self.recovernet_mode=="transformer":
+            return joints, reco
+        elif self.recovernet_mode=="tradition_interp":
+            return interp,reco
 
     def encode(self, src, src_mask, pos_embed):
 
         mask = torch.eye(src.shape[0]).bool().cuda()
         memory = self.encoder(src,
-                              mask=mask,
-                              src_key_padding_mask=src_mask,
-                              pos=pos_embed)
+                            mask=mask,
+                            src_key_padding_mask=src_mask,
+                            pos=pos_embed)
 
         return memory
 
     def decode(self, memory, memory_mask, memory_pos, tgt, tgt_mask, tgt_pos):
         hs = self.decoder(tgt,
-                          memory,
-                          tgt_key_padding_mask=tgt_mask,
-                          memory_key_padding_mask=memory_mask,
-                          pos=memory_pos,
-                          query_pos=tgt_pos)
+                        memory,
+                        tgt_key_padding_mask=tgt_mask,
+                        memory_key_padding_mask=memory_mask,
+                        pos=memory_pos,
+                        query_pos=tgt_pos)
         return hs
 
 
@@ -311,9 +310,9 @@ class TransformerEncoder(nn.Module):
 
         for layer in self.layers:
             output = layer(output,
-                           src_mask=mask,
-                           src_key_padding_mask=src_key_padding_mask,
-                           pos=pos)
+                            src_mask=mask,
+                            src_key_padding_mask=src_key_padding_mask,
+                            pos=pos)
 
         if self.norm is not None:
             output = self.norm(output)
@@ -342,13 +341,13 @@ class TransformerDecoder(nn.Module):
 
         for layer in self.layers:
             output = layer(output,
-                           memory,
-                           tgt_mask=tgt_mask,
-                           memory_mask=memory_mask,
-                           tgt_key_padding_mask=tgt_key_padding_mask,
-                           memory_key_padding_mask=memory_key_padding_mask,
-                           pos=pos,
-                           query_pos=query_pos)
+                            memory,
+                            tgt_mask=tgt_mask,
+                            memory_mask=memory_mask,
+                            tgt_key_padding_mask=tgt_key_padding_mask,
+                            memory_key_padding_mask=memory_key_padding_mask,
+                            pos=pos,
+                            query_pos=query_pos)
 
         if self.norm is not None:
             output = self.norm(output)
@@ -359,16 +358,16 @@ class TransformerDecoder(nn.Module):
 class TransformerEncoderLayer(nn.Module):
 
     def __init__(self,
-                 encoder_hidden_dim,
-                 nhead,
-                 dim_feedforward=256,
-                 dropout=0.1,
-                 activation="leaky_relu",
-                 pre_norm=True):
+                    encoder_hidden_dim,
+                    nhead,
+                    dim_feedforward=256,
+                    dropout=0.1,
+                    activation="leaky_relu",
+                    pre_norm=True):
         super().__init__()
         self.self_attn = nn.MultiheadAttention(encoder_hidden_dim,
-                                               nhead,
-                                               dropout=dropout)
+                                                nhead,
+                                                dropout=dropout)
         # Implementation of Feedforward model
         self.linear1 = nn.Linear(encoder_hidden_dim, dim_feedforward)
         self.dropout = nn.Dropout(dropout)
@@ -386,16 +385,16 @@ class TransformerEncoderLayer(nn.Module):
         return tensor if pos is None else tensor + pos
 
     def forward_post(self,
-                     src,
-                     src_mask: Optional[Tensor] = None,
-                     src_key_padding_mask: Optional[Tensor] = None,
-                     pos: Optional[Tensor] = None):
+                        src,
+                        src_mask: Optional[Tensor] = None,
+                        src_key_padding_mask: Optional[Tensor] = None,
+                        pos: Optional[Tensor] = None):
         q = k = self.with_pos_embed(src, pos)
         src2 = self.self_attn(q,
-                              k,
-                              value=src,
-                              attn_mask=src_mask,
-                              key_padding_mask=src_key_padding_mask)[0]
+                                k,
+                                value=src,
+                                attn_mask=src_mask,
+                                key_padding_mask=src_key_padding_mask)[0]
         src = src + self.dropout1(src2)
         src = self.norm1(src)
         src2 = self.linear2(self.dropout(self.activation(self.linear1(src))))
@@ -411,10 +410,10 @@ class TransformerEncoderLayer(nn.Module):
         src2 = self.norm1(src)
         q = k = self.with_pos_embed(src2, pos)  #todo. linear
         src2 = self.self_attn(q,
-                              k,
-                              value=src2,
-                              attn_mask=src_mask,
-                              key_padding_mask=src_key_padding_mask)[0]
+                                k,
+                                value=src2,
+                                attn_mask=src_mask,
+                                key_padding_mask=src_key_padding_mask)[0]
         src = src + self.dropout1(src2)
         src2 = self.norm2(src)
         src2 = self.linear2(self.dropout(self.activation(self.linear1(src2))))
@@ -434,16 +433,16 @@ class TransformerEncoderLayer(nn.Module):
 class TransformerDecoderLayer(nn.Module):
 
     def __init__(self,
-                 decoder_hidden_dim,
-                 nhead,
-                 dim_feedforward=256,
-                 dropout=0.1,
-                 activation="leaky_relu",
-                 pre_norm=True):
+                    decoder_hidden_dim,
+                    nhead,
+                    dim_feedforward=256,
+                    dropout=0.1,
+                    activation="leaky_relu",
+                    pre_norm=True):
         super().__init__()
         self.self_attn = nn.MultiheadAttention(decoder_hidden_dim,
-                                               nhead,
-                                               dropout=dropout)
+                                                nhead,
+                                                dropout=dropout)
         self.multihead_attn = nn.MultiheadAttention(decoder_hidden_dim,
                                                     nhead,
                                                     dropout=dropout)
@@ -466,27 +465,27 @@ class TransformerDecoderLayer(nn.Module):
         return tensor if pos is None else tensor + pos
 
     def forward_post(self,
-                     tgt,
-                     memory,
-                     tgt_mask: Optional[Tensor] = None,
-                     memory_mask: Optional[Tensor] = None,
-                     tgt_key_padding_mask: Optional[Tensor] = None,
-                     memory_key_padding_mask: Optional[Tensor] = None,
-                     pos: Optional[Tensor] = None,
-                     query_pos: Optional[Tensor] = None):
+                        tgt,
+                        memory,
+                        tgt_mask: Optional[Tensor] = None,
+                        memory_mask: Optional[Tensor] = None,
+                        tgt_key_padding_mask: Optional[Tensor] = None,
+                        memory_key_padding_mask: Optional[Tensor] = None,
+                        pos: Optional[Tensor] = None,
+                        query_pos: Optional[Tensor] = None):
         q = k = self.with_pos_embed(tgt, query_pos)
         tgt2 = self.self_attn(q,
-                              k,
-                              value=tgt,
-                              attn_mask=tgt_mask,
-                              key_padding_mask=tgt_key_padding_mask)[0]
+                                k,
+                                value=tgt,
+                                attn_mask=tgt_mask,
+                                key_padding_mask=tgt_key_padding_mask)[0]
         tgt = tgt + self.dropout1(tgt2)
         tgt = self.norm1(tgt)
         tgt2 = self.multihead_attn(query=self.with_pos_embed(tgt, query_pos),
-                                   key=self.with_pos_embed(memory, pos),
-                                   value=memory,
-                                   attn_mask=memory_mask,
-                                   key_padding_mask=memory_key_padding_mask)[0]
+                                    key=self.with_pos_embed(memory, pos),
+                                    value=memory,
+                                    attn_mask=memory_mask,
+                                    key_padding_mask=memory_key_padding_mask)[0]
         tgt = tgt + self.dropout2(tgt2)
         tgt = self.norm2(tgt)
         tgt2 = self.linear2(self.dropout(self.activation(self.linear1(tgt))))
@@ -506,17 +505,17 @@ class TransformerDecoderLayer(nn.Module):
         tgt2 = self.norm1(tgt)
         q = k = self.with_pos_embed(tgt2, query_pos)
         tgt2 = self.self_attn(q,
-                              k,
-                              value=tgt2,
-                              attn_mask=tgt_mask,
-                              key_padding_mask=tgt_key_padding_mask)[0]
+                                k,
+                                value=tgt2,
+                                attn_mask=tgt_mask,
+                                key_padding_mask=tgt_key_padding_mask)[0]
         tgt = tgt + self.dropout1(tgt2)
         tgt2 = self.norm2(tgt)
         tgt2 = self.multihead_attn(query=self.with_pos_embed(tgt2, query_pos),
-                                   key=self.with_pos_embed(memory, pos),
-                                   value=memory,
-                                   attn_mask=memory_mask,
-                                   key_padding_mask=memory_key_padding_mask)[0]
+                                    key=self.with_pos_embed(memory, pos),
+                                    value=memory,
+                                    attn_mask=memory_mask,
+                                    key_padding_mask=memory_key_padding_mask)[0]
 
         tgt = tgt + self.dropout2(tgt2)
         tgt2 = self.norm3(tgt)
@@ -538,8 +537,8 @@ class TransformerDecoderLayer(nn.Module):
                                     tgt_key_padding_mask,
                                     memory_key_padding_mask, pos, query_pos)
         return self.forward_post(tgt, memory, tgt_mask, memory_mask,
-                                 tgt_key_padding_mask, memory_key_padding_mask,
-                                 pos, query_pos)
+                                    tgt_key_padding_mask, memory_key_padding_mask,
+                                    pos, query_pos)
 
 
 def _get_clones(module, N):
@@ -558,6 +557,8 @@ def build_model(args):
         num_decoder_layers=args["dec_layers"],
         activation=args["activation"],
         pre_norm=args["pre_norm"],
+        recovernet_interp_method=args["recovernet_interp_method"],
+        recovernet_mode=args["recovernet_mode"]
     )
 
 

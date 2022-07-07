@@ -12,28 +12,30 @@ def main(cfg):
     dataset_class = find_dataset_using_name(cfg.DATASET_NAME)
 
     test_dataset = dataset_class(cfg,
-                                 estimator=cfg.ESTIMATOR,
-                                 return_type=cfg.BODY_REPRESENTATION,
-                                 phase='test')
+                                estimator=cfg.ESTIMATOR,
+                                return_type=cfg.BODY_REPRESENTATION,
+                                phase='test')
 
     test_loader = DataLoader(dataset=test_dataset,
-                             batch_size=1,
-                             shuffle=False,
-                             num_workers=cfg.TRAIN.WORKERS_NUM,
-                             pin_memory=True,
-                             worker_init_fn=worker_init_fn)
+                            batch_size=1,
+                            shuffle=False,
+                            num_workers=cfg.TRAIN.WORKERS_NUM,
+                            pin_memory=True,
+                            worker_init_fn=worker_init_fn)
 
     model = DeciWatch(test_dataset.input_dimension,
-                      sample_interval=cfg.SAMPLE_INTERVAL,
-                      encoder_hidden_dim=cfg.MODEL.ENCODER_EMBEDDING_DIMENSION,
-                      decoder_hidden_dim=cfg.MODEL.DECODER_EMBEDDING_DIMENSION,
-                      dropout=cfg.MODEL.DROPOUT,
-                      nheads=cfg.MODEL.ENCODER_HEAD,
-                      dim_feedforward=256,
-                      enc_layers=cfg.MODEL.ENCODER_TRANSFORMER_BLOCK,
-                      dec_layers=cfg.MODEL.ENCODER_TRANSFORMER_BLOCK,
-                      activation="leaky_relu",
-                      pre_norm=cfg.TRAIN.PRE_NORM).to(cfg.DEVICE)
+                    sample_interval=cfg.SAMPLE_INTERVAL,
+                    encoder_hidden_dim=cfg.MODEL.ENCODER_EMBEDDING_DIMENSION,
+                    decoder_hidden_dim=cfg.MODEL.DECODER_EMBEDDING_DIMENSION,
+                    dropout=cfg.MODEL.DROPOUT,
+                    nheads=cfg.MODEL.ENCODER_HEAD,
+                    dim_feedforward=256,
+                    enc_layers=cfg.MODEL.ENCODER_TRANSFORMER_BLOCK,
+                    dec_layers=cfg.MODEL.ENCODER_TRANSFORMER_BLOCK,
+                    activation="leaky_relu",
+                    pre_norm=cfg.TRAIN.PRE_NORM,
+                    recovernet_interp_method=cfg.MODEL.DECODER_INTERP,
+                    recovernet_mode=cfg.MODEL.DECODER).to(cfg.DEVICE)
 
     if cfg.EVALUATE.PRETRAINED != '' and os.path.isfile(
             cfg.EVALUATE.PRETRAINED):

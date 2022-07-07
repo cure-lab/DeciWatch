@@ -8,10 +8,10 @@ import bisect
 class JHMDBDataset(BaseDataset):
 
     def __init__(self,
-                 cfg,
-                 estimator='simplepose',
-                 return_type='2D',
-                 phase='train'):
+                cfg,
+                estimator='simplepose',
+                return_type='2D',
+                phase='train'):
         BaseDataset.__init__(self, cfg)
 
         self.dataset_name = "jhmdb"
@@ -41,7 +41,7 @@ class JHMDBDataset(BaseDataset):
 
         print('#############################################################')
         print('You are loading the [' + self.phase + 'ing set] of dataset [' +
-              self.dataset_name + ']')
+            self.dataset_name + ']')
         print('You are using pose esimator [' + self.estimator + ']')
         print('The type of the data is [' + self.return_type + ']')
 
@@ -50,7 +50,7 @@ class JHMDBDataset(BaseDataset):
 
         self.ground_truth_path = cfg.DATASET.JHMDB.GROUND_TRUTH_PATH
         self.detected_path = os.path.join(cfg.DATASET.JHMDB.DETECTED_PATH,
-                                          self.estimator)
+                                        self.estimator)
 
         try:
             ground_truth_data = np.load(os.path.join(
@@ -129,8 +129,8 @@ class JHMDBDataset(BaseDataset):
             pred_data = self.detected_data_joints_2d[position].reshape(
                 ground_truth_data_len, -1)
             gt_imgshape = self.ground_truth_data_imgshape[position]
-            gt_data = gt_data.reshape(-1, 2) / gt_imgshape[:2]
-            pred_data = pred_data.reshape(-1, 2) / gt_imgshape[:2]
+            gt_data = gt_data.reshape(-1, 2) / gt_imgshape[:2][::-1]
+            pred_data = pred_data.reshape(-1, 2) / gt_imgshape[:2][::-1]
             gt_data = gt_data.reshape(-1, self.input_dimension)
             pred_data = pred_data.reshape(-1, self.input_dimension)
 
@@ -140,7 +140,7 @@ class JHMDBDataset(BaseDataset):
                 axis=0)
             pred_data = np.concatenate(
                 (pred_data,
-                 np.zeros(tuple((1, )) + tuple(pred_data.shape[1:]))),
+                np.zeros(tuple((1, )) + tuple(pred_data.shape[1:]))),
                 axis=0)
 
             start_idx = (index - self.data_start_num[position]) % (
@@ -155,13 +155,13 @@ class JHMDBDataset(BaseDataset):
                 np.zeros(
                     tuple((self.slide_window_size - ground_truth_data_len, )) +
                     tuple(gt_data.shape[1:]))),
-                                     axis=0)
+                                    axis=0)
             pred_data = np.concatenate((
                 pred_data,
                 np.zeros(
                     tuple((self.slide_window_size - ground_truth_data_len, )) +
                     tuple(pred_data.shape[1:]))),
-                                       axis=0)
+                                    axis=0)
 
         return {"gt": gt_data, "pred": pred_data}
 
@@ -179,8 +179,8 @@ class JHMDBDataset(BaseDataset):
             pred_data = self.detected_data_joints_2d[index].reshape(
                 ground_truth_data_len, -1)
             gt_imgshape = self.ground_truth_data_imgshape[index]
-            gt_data = gt_data.reshape(-1, 2) / gt_imgshape[:2]
-            pred_data = pred_data.reshape(-1, 2) / gt_imgshape[:2]
+            gt_data = gt_data.reshape(-1, 2) / gt_imgshape[:2][::-1]
+            pred_data = pred_data.reshape(-1, 2) / gt_imgshape[:2][::-1]
             gt_data = gt_data.reshape(-1, self.input_dimension)
             pred_data = pred_data.reshape(-1, self.input_dimension)
             gt_bbox = self.ground_truth_data_bbox[index]
@@ -204,19 +204,19 @@ class JHMDBDataset(BaseDataset):
                 np.zeros(
                     tuple((self.slide_window_size - ground_truth_data_len, )) +
                     tuple(gt_data.shape[1:]))),
-                                     axis=0)[np.newaxis, :]
+                                    axis=0)[np.newaxis, :]
             pred_data = np.concatenate((
                 pred_data,
                 np.zeros(
                     tuple((self.slide_window_size - ground_truth_data_len, )) +
                     tuple(pred_data.shape[1:]))),
-                                       axis=0)[np.newaxis, :]
+                                    axis=0)[np.newaxis, :]
             gt_bbox = np.concatenate((
                 gt_bbox,
                 np.zeros(
                     tuple((self.slide_window_size - ground_truth_data_len, )) +
                     tuple(gt_bbox.shape[1:]))),
-                                     axis=0)[np.newaxis, :]
+                                    axis=0)[np.newaxis, :]
 
         return {
             "gt": gt_data,

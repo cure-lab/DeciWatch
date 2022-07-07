@@ -1,0 +1,6 @@
+data
+results
+demo
+.vscode
+*.log
+__pycache__

@@ -102,7 +102,7 @@ You may refer to [doc/training.md](./doc/training.md) for more training details.
 
 | Dataset | Estimator | PCK 0.05 (Input/Output):arrow_up: | PCK 0.1 (Input/Output):arrow_up: | PCK 0.2 (Input/Output):arrow_up: | Checkpoint |
 | ------- | --------- | -------------------- | ------------------ | ------------- |------------- |
-| Sub-JHMDB   | simplepose      | 57.30%/79.32%              |81.61%/94.27%              | 93.94%/98.85%           |[Baidu Netdisk](https://pan.baidu.com/s/1W_9xEyJ9Y7zlBOt5fYpEWQ?pwd=rehu) / [Google Drive](https://drive.google.com/drive/folders/1Wd4MxpxLmqoTMB8AlnnMY4Vb641dp2Tw?usp=sharing)|
+| Sub-JHMDB   | simplepose      | 57.30%/79.44% |81.61%/94.05%              | 93.94%/98.75% |[Baidu Netdisk](https://pan.baidu.com/s/1W_9xEyJ9Y7zlBOt5fYpEWQ?pwd=rehu) / [Google Drive](https://drive.google.com/drive/folders/1Wd4MxpxLmqoTMB8AlnnMY4Vb641dp2Tw?usp=sharing)|
 
 
 **Results on 3D Pose:**
