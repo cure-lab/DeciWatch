@@ -1,4 +1,4 @@
- # DeciWatch: A Simple Baseline for 10× Efficient 2D and 3D Pose Estimation
+ # DeciWatch: A Simple Baseline for 10× Efficient 2D and 3D Pose Estimation (ECCV 2022)
 
 This repo is the official implementation of "**DeciWatch: A Simple Baseline for 10× Efficient 2D and 3D Pose Estimation**". 
 [[Paper]](https://arxiv.org/pdf/2203.08713.pdf)  [[Project]](https://ailingzeng.site/deciwatch)
