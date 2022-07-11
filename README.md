@@ -80,23 +80,29 @@ Please refer to [doc/data.md](doc/data.md) for detailed data information and dat
 
 ### Training
 
+Note that the training and testing datasets should be downloaded and prepared before training.
+
+You may refer to [doc/training.md](./doc/training.md) for more training details.
+
 Run the commands below to start training:
 
 ```shell script
 python train.py --cfg [config file] --dataset_name [dataset name] --estimator [backbone estimator you use] --body_representation [smpl/3D/2D] --sample_interval [sample interval N]
 ```
 
-For example, you can train on 3D representation of 3DPW using backbone estimator SPIN with sample interval 10 by:
+For example, you can train on **3D position representation** of the **3DPW dataset** using the **backbone estimator SPIN** with a sample interval **N=10** (sampling ratio=10%) by:
 
 ```shell script
 python train.py --cfg configs/config_pw3d_spin.yaml --dataset_name pw3d --estimator spin --body_representation 3D --sample_interval 10
 ```
 
-Note that the training and testing datasets should be downloaded and prepared before training.
 
-You may refer to [doc/training.md](./doc/training.md) for more training details.
+### Evaluation (Take a 10% sampling ratio as an example)
 
-### Evaluation
+Noted that although our main contribution is the high efficiency improvement, using DeciWatch as post processing is also helpful for accuracy and smoothness improvement.
+
+You may refer to [doc/evaluate.md](./doc/evaluate.md) for evaluate details on all sampling ratios.
+
 
 **Results on 2D Pose:**
 
@@ -124,9 +130,6 @@ You may refer to [doc/training.md](./doc/training.md) for more training details.
 | 3DPW    | PARE       | 80.44/81.76                |  26.77/7.24            |94.88/95.68           | [Baidu Netdisk](https://pan.baidu.com/s/1Leo2O1FHoumk0lMaX9AFhQ?pwd=7504) / [Google Drive](https://drive.google.com/drive/folders/1m7IeojeAN9_WBTCwv8921RgOX1SPn7P4?usp=sharing) |
 | AIST++    | SPIN       | 108.25/82.10              | 33.83/7.27         | 137.51/106.08            |   [Baidu Netdisk](https://pan.baidu.com/s/1EwiR3AyMP8tnSYgU1VY1Tg?pwd=7p4f) / [Google Drive](https://drive.google.com/drive/folders/1X8N1XU2IN3DMSEE5u36Ca8nkuKEul5hj?usp=sharing) |
 
-Noted that although our main contribution is the efficiency improvement, using DeciWatch as post processing is also helpful for accuracy and smoothness improvement.
-
-You may refer to [doc/evaluate.md](./doc/evaluate.md) for evaluate details.
 
 ### Quick Demo
 
@@ -155,7 +158,7 @@ You are supposed to put corresponding images with the data structure:
         |-- ...
 ```
 
-For example, you can train on 3D representation of 3DPW using backbone estimator SPIN with sample interval 10 by:
+For example, you can visualize results of **3D position representation** on the **3DPW dataset** using the **backbone estimator SPIN** with a sample interval **N=10** (sampling ratio=10%) by:
 
 ```shell script
 python demo.py --cfg configs/config_pw3d_spin.yaml --dataset_name pw3d --estimator spin --body_representation 3D --sample_interval 10
@@ -163,7 +166,7 @@ python demo.py --cfg configs/config_pw3d_spin.yaml --dataset_name pw3d --estimat
 
 Please refer to the dataset website for the raw images. You may change the config in [lib/core/config.py](lib/core/config.py) for different visualization parameters.
 
-You may refer to [doc/visualize.md](./doc/visualize.md) for visualization details.
+You can refer to [doc/visualize.md](./doc/visualize.md) for visualization details.
 
 
 ## Citing DeciWatch
@@ -171,11 +174,12 @@ You may refer to [doc/visualize.md](./doc/visualize.md) for visualization detail
 If you find this repository useful for your work, please consider citing it as follows:
 
 ```bibtex
-@article{zeng2022deciwatch,
+@inproceedings{zeng2022deciwatch,
   title={DeciWatch: A Simple Baseline for 10x Efficient 2D and 3D Pose Estimation},
   author={Zeng, Ailing and Ju, Xuan and Yang, Lei and Gao, Ruiyuan and Zhu, Xizhou and Dai, Bo and Xu, Qiang},
-  journal={arXiv preprint arXiv:2203.08713},
-  year={2022}
+  booktitle={European Conference on Computer Vision},
+  year={2022},
+  organization={Springer}
 }
 ```
 
