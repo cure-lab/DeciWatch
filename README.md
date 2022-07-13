@@ -18,8 +18,6 @@ It currently includes **code, data, log and models** for the following tasks:
 ## TODO
 - [ ] Support DeciWatch in [MMPose](https://github.com/open-mmlab/mmpose)
 
-
-
 ## Description
 
 This paper proposes a simple baseline framework for video-based 2D/3D human pose estimation that can achieve 10 times efficiency improvement over existing works without any performance degradation, named DeciWatch. Unlike current solutions that estimate each frame in a video, DeciWatch introduces a simple yet effective sample-denoise-recover framework that only watches sparsely sampled frames, taking advantage of the continuity of human motions and the lightweight pose representation. Specifically, DeciWatch uniformly samples less than 10% video frames for detailed estimation, denoises the estimated 2D/3D poses with an efficient Transformer architecture, and then accurately recovers the rest of the frames using another Transformer-based network. Comprehensive experimental results on three video-based human pose estimation, body mesh recovery tasks and efficient labeling in videos with four datasets validate the efficiency and effectiveness of DeciWatch.
@@ -96,7 +94,6 @@ For example, you can train on **3D position representation** of the **3DPW datas
 python train.py --cfg configs/config_pw3d_spin.yaml --dataset_name pw3d --estimator spin --body_representation 3D --sample_interval 10
 ```
 
-
 ### Evaluation (Take a 10% sampling ratio as an example)
 
 Noted that although our main contribution is the high efficiency improvement, using DeciWatch as post processing is also helpful for accuracy and smoothness improvement.
@@ -129,7 +126,6 @@ You may refer to [doc/evaluate.md](./doc/evaluate.md) for evaluate details on al
 | 3DPW    | EFT       | 91.60/92.56              | 33.57/8.75           | 110.34/109.27            |[Baidu Netdisk](https://pan.baidu.com/s/1SP9EPwd_S0MPiyTfWGLgUg?pwd=8lfn) / [Google Drive](https://drive.google.com/drive/folders/1P_LObi8Tr09lw8149Pqe4Ks2SOK-RvYN?usp=sharing)|
 | 3DPW    | PARE       | 80.44/81.76                |  26.77/7.24            |94.88/95.68           | [Baidu Netdisk](https://pan.baidu.com/s/1Leo2O1FHoumk0lMaX9AFhQ?pwd=7504) / [Google Drive](https://drive.google.com/drive/folders/1m7IeojeAN9_WBTCwv8921RgOX1SPn7P4?usp=sharing) |
 | AIST++    | SPIN       | 108.25/82.10              | 33.83/7.27         | 137.51/106.08            |   [Baidu Netdisk](https://pan.baidu.com/s/1EwiR3AyMP8tnSYgU1VY1Tg?pwd=7p4f) / [Google Drive](https://drive.google.com/drive/folders/1X8N1XU2IN3DMSEE5u36Ca8nkuKEul5hj?usp=sharing) |
-
 
 ### Quick Demo
 
@@ -170,7 +166,6 @@ Please refer to the dataset website for the raw images. You may change the confi
 
 You can refer to [doc/visualize.md](./doc/visualize.md) for visualization details.
 
-
 ## Citing DeciWatch
 
 If you find this repository useful for your work, please consider citing it as follows:
@@ -186,7 +181,6 @@ If you find this repository useful for your work, please consider citing it as f
 ```
 
 Please remember to cite all the datasets and backbone estimators if you use them in your experiments.
-
 
 ## Acknowledgement
 
