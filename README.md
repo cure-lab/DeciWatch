@@ -133,7 +133,7 @@ You may refer to [doc/evaluate.md](./doc/evaluate.md) for evaluate details on al
 
 ### Quick Demo
 
-Here, we only provide demo visualization based on off-line processed detected poses of specific datasets. To visualize on arbitrary given video, please refer to [MMHuman3D](https://github.com/open-mmlab/mmhuman3d).
+Here, we only provide demo visualization based on offline processed detected poses of specific datasets(e.g. AIST++, Human3.6M, 3DPW, and Sub-JHMDB). To visualize on arbitrary given video, please refer to the [inference/demo](https://github.com/open-mmlab/mmhuman3d/blob/main/docs/getting_started.md) of [MMHuman3D](https://github.com/open-mmlab/mmhuman3d).
 
 Run the commands below to visualize demo:
 
