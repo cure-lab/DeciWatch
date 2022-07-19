@@ -54,7 +54,7 @@ EVALUATE:
   PRETRAINED : 'data/checkpoints/pw3d_eft_smpl/checkpoint.pth.tar'
   ROOT_RELATIVE : True 
   SLIDE_WINDOW_STEP_Q : 10
-  INTERP : False
+  INTERP : 'linear'
   RELATIVE_IMPROVEMENT : False
   DENOISE : False
 

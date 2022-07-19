@@ -106,7 +106,7 @@ cfg.EVALUATE.PRETRAINED = ''  # evaluation checkpoint
 cfg.EVALUATE.ROOT_RELATIVE = True  # root relative represntation in error caculation
 cfg.EVALUATE.SLIDE_WINDOW_STEP_Q = 10  # slide window step
 cfg.EVALUATE.SLIDE_WINDOW_STEP_SIZE = cfg.MODEL.INTERVAL_N * cfg.EVALUATE.SLIDE_WINDOW_STEP_Q  # slide window step size
-cfg.EVALUATE.INTERP=False
+cfg.EVALUATE.INTERP='linear'
 cfg.EVALUATE.RELATIVE_IMPROVEMENT=False
 cfg.EVALUATE.DENOISE=False
 

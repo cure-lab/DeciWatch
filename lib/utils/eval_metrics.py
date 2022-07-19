@@ -1,8 +1,6 @@
 import torch
 import numpy as np
-from numpy import transpose
-# import sys
-# import os
+import scipy.interpolate
 from lib.models.smpl import SMPL
 from lib.utils.geometry_utils import *
 from lib.utils.utils import slide_window_to_sequence
@@ -185,10 +183,11 @@ def evaluate_deciwatch_2D(model,
     denoise_pck_01 = torch.empty((keypoint_number, 0)).to(device)
     denoise_pck_02 = torch.empty((keypoint_number, 0)).to(device)
 
-    # linear interpolation pck
-    interp_pck_005 = torch.empty((keypoint_number, 0)).to(device)
-    interp_pck_01 = torch.empty((keypoint_number, 0)).to(device)
-    interp_pck_02 = torch.empty((keypoint_number, 0)).to(device)
+    if cfg.EVALUATE.INTERP != "":
+        # linear interpolation pck
+        interp_pck_005 = torch.empty((keypoint_number, 0)).to(device)
+        interp_pck_01 = torch.empty((keypoint_number, 0)).to(device)
+        interp_pck_02 = torch.empty((keypoint_number, 0)).to(device)
 
     # improvement based on selected frames
     improve_pck_005=[]
@@ -203,14 +202,27 @@ def evaluate_deciwatch_2D(model,
         data_bbox = data["bbox"].to(device).squeeze(0)
         data_imgshape = data["imgshape"].to(device)
         # linear interpolation
-        choose_index = range(0, cfg.MODEL.SLIDE_WINDOW_SIZE,
+        
+        if cfg.EVALUATE.INTERP != "":
+            choose_index = range(0, cfg.MODEL.SLIDE_WINDOW_SIZE,
                              cfg.MODEL.INTERVAL_N)
-        # Modify "mode" into three modes: 'nearest' | 'linear' | 'bilinear'
-        data_interp1d = torch.nn.functional.interpolate(
-            input=data_pred[:, choose_index, :].permute(0, 2, 1),
-            size=cfg.MODEL.SLIDE_WINDOW_SIZE,
-            mode='linear',
-            align_corners=True).permute(0, 2, 1) 
+
+            interp_f=scipy.interpolate.interp1d(choose_index, 
+                    data_pred[:, choose_index, :].cpu().numpy(), 
+                    kind=cfg.EVALUATE.INTERP, 
+                    axis= 1, 
+                    copy=True, 
+                    bounds_error=None, 
+                    fill_value="extrapolate", 
+                    assume_sorted=False)
+            data_interp1d=torch.tensor(interp_f(
+                            range(0, cfg.MODEL.SLIDE_WINDOW_SIZE))).to(data_pred.device)
+
+            # data_interp1d = torch.nn.functional.interpolate(
+            #     input=data_pred[:, choose_index, :].permute(0, 2, 1),
+            #     size=cfg.MODEL.SLIDE_WINDOW_SIZE,
+            #     mode='linear',
+            #     align_corners=True).permute(0, 2, 1) 
         # deciwatch
         with torch.no_grad():
             predicted_pos, denoised_pos = model(data_pred, device)
@@ -219,7 +231,8 @@ def evaluate_deciwatch_2D(model,
         denoised_pos = slide_window_to_sequence(denoised_pos,cfg.EVALUATE.SLIDE_WINDOW_STEP_SIZE,cfg.MODEL.SLIDE_WINDOW_SIZE).reshape(-1, keypoint_number, 2)
         data_pred = slide_window_to_sequence(data_pred,cfg.EVALUATE.SLIDE_WINDOW_STEP_SIZE,cfg.MODEL.SLIDE_WINDOW_SIZE).reshape(-1, keypoint_number, 2)
         data_gt = slide_window_to_sequence(data_gt,cfg.EVALUATE.SLIDE_WINDOW_STEP_SIZE,cfg.MODEL.SLIDE_WINDOW_SIZE).reshape(-1, keypoint_number, 2)
-        data_interp1d = slide_window_to_sequence(data_interp1d,cfg.EVALUATE.SLIDE_WINDOW_STEP_SIZE,cfg.MODEL.SLIDE_WINDOW_SIZE).reshape(-1, keypoint_number, 2)
+        if cfg.EVALUATE.INTERP != "":
+            data_interp1d = slide_window_to_sequence(data_interp1d,cfg.EVALUATE.SLIDE_WINDOW_STEP_SIZE,cfg.MODEL.SLIDE_WINDOW_SIZE).reshape(-1, keypoint_number, 2)
         data_bbox = slide_window_to_sequence(data_bbox,cfg.EVALUATE.SLIDE_WINDOW_STEP_SIZE,cfg.MODEL.SLIDE_WINDOW_SIZE).type(torch.int32)
         # evaluate on jhmdb
         if cfg.DATASET_NAME == "jhmdb":
@@ -286,27 +299,28 @@ def evaluate_deciwatch_2D(model,
                                      data_imgshape, 0.2).reshape(
                                          keypoint_number, 1)),
                 dim=1)
-            # linear interpolation pck
-            interp_pck_005 = torch.cat(
-                (interp_pck_005,
-                 calculate_jhmdb_PCK(data_interp1d, data_gt, data_bbox,
-                                     data_imgshape, 0.05).reshape(
-                                         keypoint_number, 1)),
-                dim=1)
+            if cfg.EVALUATE.INTERP != "":
+                # linear interpolation pck
+                interp_pck_005 = torch.cat(
+                    (interp_pck_005,
+                    calculate_jhmdb_PCK(data_interp1d, data_gt, data_bbox,
+                                        data_imgshape, 0.05).reshape(
+                                            keypoint_number, 1)),
+                    dim=1)
 
-            interp_pck_01 = torch.cat(
-                (interp_pck_01,
-                 calculate_jhmdb_PCK(data_interp1d, data_gt, data_bbox,
-                                     data_imgshape, 0.1).reshape(
-                                         keypoint_number, 1)),
-                dim=1)
+                interp_pck_01 = torch.cat(
+                    (interp_pck_01,
+                    calculate_jhmdb_PCK(data_interp1d, data_gt, data_bbox,
+                                        data_imgshape, 0.1).reshape(
+                                            keypoint_number, 1)),
+                    dim=1)
 
-            interp_pck_02 = torch.cat(
-                (interp_pck_02,
-                 calculate_jhmdb_PCK(data_interp1d, data_gt, data_bbox,
-                                     data_imgshape, 0.2).reshape(
-                                         keypoint_number, 1)),
-                dim=1)
+                interp_pck_02 = torch.cat(
+                    (interp_pck_02,
+                    calculate_jhmdb_PCK(data_interp1d, data_gt, data_bbox,
+                                        data_imgshape, 0.2).reshape(
+                                            keypoint_number, 1)),
+                    dim=1)
             # relative improvement
             improve_pck_005.append(
                 calculate_jhmdb_PCK(predicted_pos, data_gt, data_bbox,
@@ -353,7 +367,7 @@ def evaluate_deciwatch_2D(model,
                             pck.mean()))
 
         if show_detail:
-            if cfg.EVALUATE.INTERP:
+            if cfg.EVALUATE.INTERP != "":
                 print_detail(input_pck_005, "INPUT PCK 0.05")
                 print_detail(eval_pck_005, "OUTPUT PCK 0.05")
                 print_detail(interp_pck_005, "LINEAR INTERP PCK 0.05")
@@ -382,7 +396,7 @@ def evaluate_deciwatch_2D(model,
             "output_pck_02": eval_pck_02.mean(),
             "improvement_pck_02": eval_pck_02.mean() - input_pck_02.mean(),
         }
-    if cfg.EVALUATE.INTERP:
+    if cfg.EVALUATE.INTERP != "":
         eval_dict["linear_interp_pck_005"]=interp_pck_005.mean()
         eval_dict["linear_interp_pck_01"]=interp_pck_01.mean()
         eval_dict["linear_interp_pck_02"]=interp_pck_02.mean()
@@ -415,9 +429,10 @@ def evaluate_deciwatch_3D(model, test_dataloader, device, cfg):
     denoise_mpjpe = torch.empty((0)).to(device)
     denoise_pampjpe = torch.empty((0)).to(device)
 
-    interp_mpjpe = torch.empty((0)).to(device)
-    interp_pampjpe = torch.empty((0)).to(device)
-    interp_accel = torch.empty((0)).to(device)
+    if cfg.EVALUATE.INTERP != "":
+        interp_mpjpe = torch.empty((0)).to(device)
+        interp_pampjpe = torch.empty((0)).to(device)
+        interp_accel = torch.empty((0)).to(device)
 
     # improvement based on selected frames
     improve_mpjpe = []
@@ -427,14 +442,26 @@ def evaluate_deciwatch_3D(model, test_dataloader, device, cfg):
         data_pred = data["pred"].to(device).squeeze(0)
         data_gt = data["gt"].to(device).squeeze(0)
 
-        choose_index = range(0, cfg.MODEL.SLIDE_WINDOW_SIZE,
+        if cfg.EVALUATE.INTERP != "":
+            choose_index = range(0, cfg.MODEL.SLIDE_WINDOW_SIZE,
                              cfg.MODEL.INTERVAL_N)
-        # Modify "mode" into three modes: 'nearest' | 'linear' | 'bilinear'
-        data_interp1d = torch.nn.functional.interpolate(
-            input=data_pred[:, choose_index, :].permute(0, 2, 1),
-            size=cfg.MODEL.SLIDE_WINDOW_SIZE,
-            mode='linear',
-            align_corners=True).permute(0, 2, 1)
+
+            interp_f=scipy.interpolate.interp1d(choose_index, 
+                    data_pred[:, choose_index, :].cpu().numpy(), 
+                    kind=cfg.EVALUATE.INTERP, 
+                    axis= 1, 
+                    copy=True, 
+                    bounds_error=None, 
+                    fill_value="extrapolate", 
+                    assume_sorted=False)
+            data_interp1d=torch.tensor(interp_f(
+                            range(0, cfg.MODEL.SLIDE_WINDOW_SIZE))).to(data_pred.device)
+
+            # data_interp1d = torch.nn.functional.interpolate(
+            #     input=data_pred[:, choose_index, :].permute(0, 2, 1),
+            #     size=cfg.MODEL.SLIDE_WINDOW_SIZE,
+            #     mode='linear',
+            #     align_corners=True).permute(0, 2, 1)
 
         with torch.no_grad():
             predicted_pos, denoised_pos = model(data_pred, device)
@@ -443,7 +470,8 @@ def evaluate_deciwatch_3D(model, test_dataloader, device, cfg):
         denoised_pos = slide_window_to_sequence(denoised_pos,cfg.EVALUATE.SLIDE_WINDOW_STEP_SIZE,cfg.MODEL.SLIDE_WINDOW_SIZE).reshape(-1, keypoint_number, 3)
         data_pred = slide_window_to_sequence(data_pred,cfg.EVALUATE.SLIDE_WINDOW_STEP_SIZE,cfg.MODEL.SLIDE_WINDOW_SIZE).reshape(-1, keypoint_number, 3)
         data_gt = slide_window_to_sequence(data_gt,cfg.EVALUATE.SLIDE_WINDOW_STEP_SIZE,cfg.MODEL.SLIDE_WINDOW_SIZE).reshape(-1, keypoint_number, 3)
-        data_interp1d = slide_window_to_sequence(data_interp1d,cfg.EVALUATE.SLIDE_WINDOW_STEP_SIZE,cfg.MODEL.SLIDE_WINDOW_SIZE).reshape(-1, keypoint_number, 3)
+        if cfg.EVALUATE.INTERP != "":
+            data_interp1d = slide_window_to_sequence(data_interp1d,cfg.EVALUATE.SLIDE_WINDOW_STEP_SIZE,cfg.MODEL.SLIDE_WINDOW_SIZE).reshape(-1, keypoint_number, 3)
 
         if cfg.EVALUATE.ROOT_RELATIVE:
             predicted_pos = predicted_pos - predicted_pos[:,
@@ -458,7 +486,8 @@ def evaluate_deciwatch_3D(model, test_dataloader, device, cfg):
                 axis=1).reshape(-1, 1, 3)
             data_gt = data_gt - data_gt[:, keypoint_root, :].mean(
                 axis=1).reshape(-1, 1, 3)
-            data_interp1d = data_interp1d - data_interp1d[:,
+            if cfg.EVALUATE.INTERP != "":
+                data_interp1d = data_interp1d - data_interp1d[:,
                                                           keypoint_root, :].mean(
                                                               axis=1).reshape(
                                                                   -1, 1, 3)
@@ -481,14 +510,15 @@ def evaluate_deciwatch_3D(model, test_dataloader, device, cfg):
             (denoise_mpjpe, calculate_mpjpe(denoised_pos[::cfg.MODEL.INTERVAL_N,...], data_gt[::cfg.MODEL.INTERVAL_N,...])), dim=0)
         denoise_pampjpe = torch.cat(
             (denoise_pampjpe, calculate_pampjpe(denoised_pos[::cfg.MODEL.INTERVAL_N,...], data_gt[::cfg.MODEL.INTERVAL_N,...])), dim=0)
-       
-        interp_mpjpe = torch.cat(
-            (interp_mpjpe, calculate_mpjpe(data_interp1d, data_gt)), dim=0)
-        interp_pampjpe = torch.cat(
-            (interp_pampjpe, calculate_pampjpe(data_interp1d, data_gt)), dim=0)
-        interp_accel = torch.cat(
-            (interp_accel, calculate_accel_error(data_interp1d, data_gt)),
-            dim=0)
+
+        if cfg.EVALUATE.INTERP != "":
+            interp_mpjpe = torch.cat(
+                (interp_mpjpe, calculate_mpjpe(data_interp1d, data_gt)), dim=0)
+            interp_pampjpe = torch.cat(
+                (interp_pampjpe, calculate_pampjpe(data_interp1d, data_gt)), dim=0)
+            interp_accel = torch.cat(
+                (interp_accel, calculate_accel_error(data_interp1d, data_gt)),
+                dim=0)
         
         improve_mpjpe.append(calculate_mpjpe(predicted_pos, data_gt).mean()-
                             calculate_mpjpe(data_pred[::cfg.MODEL.INTERVAL_N,...],data_gt[::cfg.MODEL.INTERVAL_N,...]).mean())
@@ -510,7 +540,7 @@ def evaluate_deciwatch_3D(model, test_dataloader, device, cfg):
             "improvement_accel": eval_accel.mean() * m2mm - input_accel.mean() * m2mm,
         }
 
-    if cfg.EVALUATE.INTERP:
+    if cfg.EVALUATE.INTERP != "":
         eval_dict["linear_interp_mpjpe"]=interp_mpjpe.mean() * m2mm
         eval_dict["linear_interp_pampjpe"]=interp_pampjpe.mean() * m2mm
         eval_dict["linear_interp_accel"]=interp_accel.mean() * m2mm
@@ -547,10 +577,11 @@ def evaluate_deciwatch_smpl(model, test_dataloader, device, cfg):
     denoise_pampjpe = torch.empty((0)).to(device)
     denoise_mpvpe = torch.empty((0)).to(device)
 
-    interp_mpjpe = torch.empty((0)).to(device)
-    interp_pampjpe = torch.empty((0)).to(device)
-    interp_accel = torch.empty((0)).to(device)
-    interp_mpvpe = torch.empty((0)).to(device)
+    if cfg.EVALUATE.INTERP != "":
+        interp_mpjpe = torch.empty((0)).to(device)
+        interp_pampjpe = torch.empty((0)).to(device)
+        interp_accel = torch.empty((0)).to(device)
+        interp_mpvpe = torch.empty((0)).to(device)
 
     # improvement based on selected frames
     improve_mpjpe = []
@@ -561,14 +592,26 @@ def evaluate_deciwatch_smpl(model, test_dataloader, device, cfg):
         data_pred = data["pred"].to(device).squeeze(0)
         data_gt = data["gt"].to(device).squeeze(0)
 
-        choose_index = range(0, cfg.MODEL.SLIDE_WINDOW_SIZE,
+        
+        if cfg.EVALUATE.INTERP != "":
+            choose_index = range(0, cfg.MODEL.SLIDE_WINDOW_SIZE,
                              cfg.MODEL.INTERVAL_N)
-        # Modify "mode" into three modes: 'nearest' | 'linear' | 'bilinear'
-        data_interp1d = torch.nn.functional.interpolate(
-            input=data_pred[:, choose_index, :].permute(0, 2, 1),
-            size=cfg.MODEL.SLIDE_WINDOW_SIZE,
-            mode='linear',
-            align_corners=True).permute(0, 2, 1)
+            interp_f=scipy.interpolate.interp1d(choose_index, 
+                    data_pred[:, choose_index, :].cpu().numpy(), 
+                    kind=cfg.EVALUATE.INTERP, 
+                    axis= 1, 
+                    copy=True, 
+                    bounds_error=None, 
+                    fill_value="extrapolate", 
+                    assume_sorted=False)
+            data_interp1d=torch.tensor(interp_f(
+                            range(0, cfg.MODEL.SLIDE_WINDOW_SIZE))).to(data_pred.device)
+
+            # data_interp1d = torch.nn.functional.interpolate(
+            #     input=data_pred[:, choose_index, :].permute(0, 2, 1),
+            #     size=cfg.MODEL.SLIDE_WINDOW_SIZE,
+            #     mode='linear',
+            #     align_corners=True).permute(0, 2, 1)
 
         if cfg.TRAIN.USE_6D_SMPL:
             rotation_dimension = 6
@@ -576,7 +619,8 @@ def evaluate_deciwatch_smpl(model, test_dataloader, device, cfg):
             rotation_dimension = 3
 
         data_pred_pose = data_pred[:, :, :24 * rotation_dimension]
-        data_interp1d_pose = data_interp1d[:, :, :24 * rotation_dimension]
+        if cfg.EVALUATE.INTERP != "":
+            data_interp1d_pose = data_interp1d[:, :, :24 * rotation_dimension]
         data_gt_pose = data_gt[:, :, :24 * rotation_dimension]
         data_pred_shape = data_pred[:, :, 24 * rotation_dimension:]
 
@@ -594,7 +638,8 @@ def evaluate_deciwatch_smpl(model, test_dataloader, device, cfg):
         denoised_pos=slide_window_to_sequence(denoised_pos,cfg.EVALUATE.SLIDE_WINDOW_STEP_SIZE,cfg.MODEL.SLIDE_WINDOW_SIZE)
         data_gt_pose=slide_window_to_sequence(data_gt_pose,cfg.EVALUATE.SLIDE_WINDOW_STEP_SIZE,cfg.MODEL.SLIDE_WINDOW_SIZE)
         data_pred_pose=slide_window_to_sequence(data_pred_pose,cfg.EVALUATE.SLIDE_WINDOW_STEP_SIZE,cfg.MODEL.SLIDE_WINDOW_SIZE)
-        data_interp1d_pose=slide_window_to_sequence(data_interp1d_pose,cfg.EVALUATE.SLIDE_WINDOW_STEP_SIZE,cfg.MODEL.SLIDE_WINDOW_SIZE)
+        if cfg.EVALUATE.INTERP != "":
+            data_interp1d_pose=slide_window_to_sequence(data_interp1d_pose,cfg.EVALUATE.SLIDE_WINDOW_STEP_SIZE,cfg.MODEL.SLIDE_WINDOW_SIZE)
 
         data_pred_shape=slide_window_to_sequence(data_pred_shape,cfg.EVALUATE.SLIDE_WINDOW_STEP_SIZE,cfg.MODEL.SLIDE_WINDOW_SIZE)
         if cfg.DATASET_NAME != "aist":
@@ -613,8 +658,9 @@ def evaluate_deciwatch_smpl(model, test_dataloader, device, cfg):
                 -1, 6)).reshape(-1, 24 * 3)
             data_pred_pose = rot6D_to_axis(
                 data_pred_pose.reshape(-1, 6)).reshape(-1, 24 * 3)
-            data_interp1d_pose = rot6D_to_axis(
-                data_interp1d_pose.reshape(-1, 6)).reshape(-1, 24 * 3)
+            if cfg.EVALUATE.INTERP != "":
+                data_interp1d_pose = rot6D_to_axis(
+                    data_interp1d_pose.reshape(-1, 6)).reshape(-1, 24 * 3)
 
         with torch.no_grad():
             if cfg.DATASET_NAME != "aist":
@@ -649,12 +695,13 @@ def evaluate_deciwatch_smpl(model, test_dataloader, device, cfg):
                 betas=data_pred_shape.to(torch.float32),
             )
 
-            interp_smpl_result = smpl.forward(
-                global_orient=data_interp1d_pose[:,
-                                                    0:3].to(torch.float32),
-                body_pose=data_interp1d_pose[:, 3:].to(torch.float32),
-                betas=data_pred_shape.to(torch.float32),
-            )
+            if cfg.EVALUATE.INTERP != "":
+                interp_smpl_result = smpl.forward(
+                    global_orient=data_interp1d_pose[:,
+                                                        0:3].to(torch.float32),
+                    body_pose=data_interp1d_pose[:, 3:].to(torch.float32),
+                    betas=data_pred_shape.to(torch.float32),
+                )
 
         input_smpl_result_joints = input_smpl_result.joints[:,
                                                             SMPL_TO_J14, :]
@@ -663,7 +710,8 @@ def evaluate_deciwatch_smpl(model, test_dataloader, device, cfg):
                                                             SMPL_TO_J14, :]
         denoise_smpl_result_joints = denoise_smpl_result.joints[:,
                                                             SMPL_TO_J14, :]
-        interp_smpl_result_joints = interp_smpl_result.joints[:,
+        if cfg.EVALUATE.INTERP != "":
+            interp_smpl_result_joints = interp_smpl_result.joints[:,
                                                                 SMPL_TO_J14, :]
         if cfg.EVALUATE.ROOT_RELATIVE:
             input_smpl_result_joints = input_smpl_result_joints - input_smpl_result_joints[:, keypoint_root, :].mean(
@@ -674,7 +722,8 @@ def evaluate_deciwatch_smpl(model, test_dataloader, device, cfg):
                 axis=1).reshape(-1, 1, 3)
             denoise_smpl_result_joints = denoise_smpl_result_joints - denoise_smpl_result_joints[:, keypoint_root, :].mean(
                 axis=1).reshape(-1, 1, 3)
-            interp_smpl_result_joints = interp_smpl_result_joints - interp_smpl_result_joints[:, keypoint_root, :].mean(
+            if cfg.EVALUATE.INTERP != "":
+                interp_smpl_result_joints = interp_smpl_result_joints - interp_smpl_result_joints[:, keypoint_root, :].mean(
                 axis=1).reshape(-1, 1, 3)
 
         input_mpjpe = torch.cat((input_mpjpe,
@@ -730,26 +779,27 @@ def evaluate_deciwatch_smpl(model, test_dataloader, device, cfg):
                                                 gt_smpl_result.vertices[::cfg.MODEL.INTERVAL_N,...])),
                                 dim=0)
 
-        interp_mpjpe = torch.cat(
-            (interp_mpjpe,
-                calculate_mpjpe(interp_smpl_result_joints,
-                                gt_smpl_result_joints)),
-            dim=0)
-        interp_pampjpe = torch.cat(
-            (interp_pampjpe,
-                calculate_pampjpe(interp_smpl_result_joints,
-                                gt_smpl_result_joints)),
-            dim=0)
-        interp_accel = torch.cat(
-            (interp_accel,
-                calculate_accel_error(interp_smpl_result_joints,
+        if cfg.EVALUATE.INTERP != "":
+            interp_mpjpe = torch.cat(
+                (interp_mpjpe,
+                    calculate_mpjpe(interp_smpl_result_joints,
                                     gt_smpl_result_joints)),
-            dim=0)
-        interp_mpvpe = torch.cat(
-            (interp_mpvpe,
-                calculate_mpjpe(interp_smpl_result.vertices,
-                                gt_smpl_result.vertices)),
-            dim=0)
+                dim=0)
+            interp_pampjpe = torch.cat(
+                (interp_pampjpe,
+                    calculate_pampjpe(interp_smpl_result_joints,
+                                    gt_smpl_result_joints)),
+                dim=0)
+            interp_accel = torch.cat(
+                (interp_accel,
+                    calculate_accel_error(interp_smpl_result_joints,
+                                        gt_smpl_result_joints)),
+                dim=0)
+            interp_mpvpe = torch.cat(
+                (interp_mpvpe,
+                    calculate_mpjpe(interp_smpl_result.vertices,
+                                    gt_smpl_result.vertices)),
+                dim=0)
 
         improve_mpjpe.append(calculate_mpjpe(eval_smpl_result_joints,gt_smpl_result_joints).mean()-
                             calculate_mpjpe(input_smpl_result_joints[::cfg.MODEL.INTERVAL_N,...],gt_smpl_result_joints[::cfg.MODEL.INTERVAL_N,...]).mean())
@@ -776,7 +826,7 @@ def evaluate_deciwatch_smpl(model, test_dataloader, device, cfg):
             "improvement_mpvpe": eval_mpvpe.mean() * m2mm - input_mpvpe.mean() * m2mm,
         }
 
-    if cfg.EVALUATE.INTERP:
+    if cfg.EVALUATE.INTERP != "":
         eval_dict["linear_interp_mpjpe"] = interp_mpjpe.mean() * m2mm
         eval_dict["linear_interp_pampjpe"] = interp_pampjpe.mean() * m2mm
         eval_dict["linear_interp_accel"] = interp_accel.mean() * m2mm

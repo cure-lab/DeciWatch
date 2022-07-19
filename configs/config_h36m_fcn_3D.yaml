@@ -61,7 +61,7 @@ EVALUATE:
   PRETRAINED : 'data/checkpoints/h36m_fcn_3d/checkpoint.pth.tar'
   ROOT_RELATIVE : True 
   SLIDE_WINDOW_STEP_Q : 1
-  INTERP : False
+  INTERP : 'linear'
   RELATIVE_IMPROVEMENT : False
   DENOISE : False
 
